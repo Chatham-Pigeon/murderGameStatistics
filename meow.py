@@ -1,6 +1,3 @@
-from enum import pickle_by_global_name
-
-from discord import Spotify
 from discord.ext import commands
 
 from SECRETS import DISCORD_TOKEN
@@ -10,41 +7,33 @@ intents = discord.Intents.default()
 intents.message_content = True
 intents.messages = True
 intents.members = True
-intents.presences = True
 bot = commands.Bot(command_prefix='!', intents=intents, help_command=None)
 
-DEBUG_CHANNEL = 1372243695268663306
-LISTENING_CHANNEL = 1372243695268663306
-PIGEON_ID = 272534243899342849
-@bot.event
-async def on_ready():
-    pass
+def parse_message(message: str):
+    split_content = message.split()
+    role = split_content.pop(2).removesuffix(":")
+    useless = split_content.pop(0)
+    useless = split_content.pop(0)
+    bought_items = []
+    for i in split_content:
+        i = i.replace("[", "")
+        i = i.replace("]", "")
+        i = i.replace(",", "")
+        bought_items.append(i)
+    return bought_items, role
+
 @bot.command()
-async def stalk(ctx: discord.ext.commands.Context, userid: int = None):
-    if userid is None:
-        userid = ctx.author.id
-    user: discord.Member = bot.get_guild(ctx.guild.id).get_member(userid)
-
-
-    for activity in user.activities:
-        if isinstance(activity, discord.Spotify):
-            await ctx.reply(activity.title)
-
+async def parse(ctx, *, content ):
+    bought_items, role = parse_message(content)
+    await ctx.reply(f"items: {bought_items}, role: {role}")
 @bot.event
-async def on_presence_update(before: discord.Member, after: discord.Member):
-    if after.id == PIGEON_ID:
-        return 
-    was_listening = False
-    for activity in before.activities:
-        if isinstance(activity, Spotify):
-            was_listening =  True
-    for activity in after.activities:
-        if isinstance(activity, Spotify):
-            if was_listening is True:
-                await bot.get_channel(LISTENING_CHANNEL).send(f'`{after.name}` is listening to "{activity.title}"')
-            else:
-                await bot.get_channel(LISTENING_CHANNEL).send(f'<@{PIGEON_ID}>`{after.name}` STARTED listening to "{activity.title}"')
-
+async def on_message(message: discord.Message):
+    if message.author.id == 1376020183302275264:
+        bought_items, role = parse_message(message.content)
+        with open('purchases.txt', 'a') as file:
+            file.write(f'{role}:{" ".join(bought_items)}\n')
+        await message.add_reaction("✅")
+    await bot.process_commands(message)
 
 
 bot.run(DISCORD_TOKEN)
