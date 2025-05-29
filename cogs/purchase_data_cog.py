@@ -28,7 +28,7 @@ class purchase_data_cog(commands.Cog):
         await ctx.reply(f"items: {bought_items}, role: {role}")
 
     @commands.command()
-    async def sbacklog(self, ctx, add_reaction: bool = False):
+    async def pbacklog(self, ctx, add_reaction: bool = False):
         total_added = 0
         total_not_added = 0
         channel = self.bot.get_channel(config.PURCHASE_STATS_CHANNEL)
@@ -60,7 +60,6 @@ class purchase_data_cog(commands.Cog):
             with open('purchases.txt', 'a') as file:
                 file.write(f'{role}:{" ".join(bought_items)}\n')
             await message.add_reaction("✅")
-        await self.bot.process_commands(message)
 
 async def setup(bot):
     await bot.add_cog(purchase_data_cog(bot))
