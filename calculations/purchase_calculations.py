@@ -5,16 +5,17 @@ def calculate_percentages(items):
         new_percentages[key] = (value / total) * 100
     return new_percentages
 def sort(items):
-    return dict(sorted(items.items(), key=lambda x: x[1], reverse=True))
-
-with (open('purchases.txt', 'r') as file):
+    return dict(sorted(items.items(), key=lambda x: [1], reverse=True))
+# 45503
+idx = 0
+with (open('data/purchases.txt', 'r') as file):
     item_count = {}
     for i in file:
+        idx = idx + 1
         role = i.strip().split(":").pop(0)
         bought_items = i.strip().split(":")[1].split(" ")
-        if role in ['detective']:
-            if len(bought_items) >= 2:
-                item = bought_items[1]
+        if not role in ['traitor']:
+            for item in bought_items:
                 if item in ['']:
                     continue
                 if item in item_count:

@@ -4,14 +4,18 @@ from discord.ext import commands
 import config
 
 def parse_map_message(content: str):
-    # 2025/5/28 09:53AM 6747: The Aquarium:innocents:true:163:1:0
+    # (1.0) 2025/5/28 09:53AM 6747: The Aquarium:innocents:true:163:1:0
     data_list = content.split(":")
-    data_list.pop(0)
+    data_version = data_list.pop(0).split(" ") #"(1.0) 2025/5/28 09"
+    if len(data_version) == 3: # game version exists
+        data_version = data_version[0].replace("(", "").replace(")", "")
+    else:
+        data_version = "0.0"
     data_list.insert(0, data_list.pop(0).split()[1])
     data_list[1] = data_list[1].strip()
     data_list[1] = data_list[1].replace(" ", "_")
     data_list[1] = data_list[1].replace("™", "")
-    return data_list
+    return data_list, data_version
 
 
 class map_data_cog(commands.Cog):
@@ -19,8 +23,8 @@ class map_data_cog(commands.Cog):
         self.bot = bot
     @commands.command()
     async def mparse(self, ctx, *, content):
-        the_list = parse_map_message(content)
-        await ctx.reply(the_list)
+        the_list, data_version = parse_map_message(content)
+        await ctx.reply(f"{the_list} \n {data_version}")
 
     @commands.command()
     async def mbacklog(self, ctx, add_reaction: bool = False):
@@ -36,8 +40,8 @@ class map_data_cog(commands.Cog):
                     break
             if saw_reaction is False or 1 == 1:
                 total_added = total_added + 1
-                data = parse_map_message(message.content)
-                with open('map_data.txt', 'a') as file:
+                data, game_version = parse_map_message(message.content)
+                with open(f'data/{game_version}.map_data.txt', 'a') as file:
                     file.write(f'{" ".join(data)}\n')
                 if add_reaction:  # only show if enabled, adding reaction slows code down largely
                     await message.add_reaction("✅")
@@ -56,7 +60,7 @@ class map_data_cog(commands.Cog):
     async def on_message(self, message = discord.Message):
         if message.author.id == config.ROUNDS_STATS_WEBHOOK_ID:
             data = parse_map_message(message.content)
-            with open('map_data.txt', 'a') as file:
+            with open('data/map_data.txt', 'a') as file:
                 file.write(f'{" ".join(data)}\n')
             await message.add_reaction("✅")
 
