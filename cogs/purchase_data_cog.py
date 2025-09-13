@@ -66,6 +66,7 @@ class purchase_data_cog(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
         if message.author.id == config.PURCHASE_STATS_WEBHOOK_ID:
+            return
             bought_items, role = parse_purchase_message(message.content)
             with open('data/purchases.txt', 'a') as file:
                 file.write(f'{role}:{" ".join(bought_items)}\n')

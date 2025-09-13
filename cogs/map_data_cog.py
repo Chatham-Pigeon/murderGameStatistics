@@ -31,24 +31,17 @@ class map_data_cog(commands.Cog):
         total_added = 0
         total_not_added = 0
         channel = self.bot.get_channel(config.ROUNDS_STATS_CHANNEL)
-        saw_reaction = False
         await ctx.reply("okay! look in console for processing info")
         async for message in channel.history(limit=None):
-            for reaction in message.reactions:
-                if reaction.emoji == "✅":
-                    saw_reaction = True
-                    break
-            if saw_reaction is False or 1 == 1:
-                total_added = total_added + 1
-                data, game_version = parse_map_message(message.content)
-                with open(f'data/{game_version}.map_data.txt', 'a') as file:
-                    file.write(f'{" ".join(data)}\n')
-                if add_reaction:  # only show if enabled, adding reaction slows code down largely
-                    await message.add_reaction("✅")
-                print(f"{total_added} ADDED: {message.content}")
-            else:
-                total_not_added = total_not_added + 1
-                print(f"{total_not_added} NOT ADDED: {message.content}")
+            total_added = total_added + 1
+            data, game_version = parse_map_message(message.content)
+            if game_version == "0.0":
+                break
+            with open(f'data/{game_version}.map_data.txt', 'a') as file:
+                file.write(f'{" ".join(data)}\n')
+            if add_reaction:  # only show if enabled, adding reaction slows code down largely
+                await message.add_reaction("✅")
+            print(f"{total_added} ADDED: {message.content}")
         await ctx.reply(
             f"Done! found {total_added} new data points, found {total_not_added} already added data points.")
 
@@ -59,6 +52,7 @@ class map_data_cog(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message = discord.Message):
         if message.author.id == config.ROUNDS_STATS_WEBHOOK_ID:
+            return
             data = parse_map_message(message.content)
             with open('data/map_data.txt', 'a') as file:
                 file.write(f'{" ".join(data)}\n')

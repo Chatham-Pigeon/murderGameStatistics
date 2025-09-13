@@ -33,6 +33,7 @@ with (open(fr'C:\Users\jacta\PycharmProjects\PythonProject1\data\{game_version}.
     game_length_per_count_formatted = {}
     median_game_length_per_count = {}
     win_team_per_player_count = {}
+    most_played_map_per_player_count = {}
     for i in file:
         game_round, map_name, win_team, fiend_win, game_length, player_count, fiend_count = i.split(" ")
         if win_team == 'Traitors':
@@ -51,6 +52,16 @@ with (open(fr'C:\Users\jacta\PycharmProjects\PythonProject1\data\{game_version}.
             player_count_count[int(player_count)] = 1
         else:
             player_count_count[int(player_count)] = player_count_count[int(player_count)] + 1
+
+        if inted_player_count not in most_played_map_per_player_count:
+            most_played_map_per_player_count[inted_player_count] = {f"{map_name}": 1}
+        else:
+            if map_name not in most_played_map_per_player_count[inted_player_count]:
+                most_played_map_per_player_count[inted_player_count][map_name] = 1
+            else:
+                most_played_map_per_player_count[inted_player_count][map_name] += 1
+        if int(player_count) < 7:
+            continue
         if inted_player_count not in win_team_per_player_count.keys():
             win_team_per_player_count[inted_player_count] = {"traitor": 0, "innocents": 0, "fiend": 0}
             if fiend_win == 'true':
@@ -62,8 +73,6 @@ with (open(fr'C:\Users\jacta\PycharmProjects\PythonProject1\data\{game_version}.
                 win_team_per_player_count[inted_player_count]['fiend'] = win_team_per_player_count[inted_player_count]['fiend'] + 1
             else:
                 win_team_per_player_count[inted_player_count][win_team] = win_team_per_player_count[inted_player_count][win_team] + 1
-        if int(player_count) < 7:
-            continue
         avg_game_length = avg_game_length + int(game_length)
         total_rounds = total_rounds + 1
         if fiend_win == 'true':
@@ -102,8 +111,6 @@ with (open(fr'C:\Users\jacta\PycharmProjects\PythonProject1\data\{game_version}.
 
 
 
-
-
     for name, length in avg_team_win_length.items():
         length = (length / 20)
         minutes, seconds = divmod(length / win_dict[name], 60)
@@ -114,9 +121,15 @@ with (open(fr'C:\Users\jacta\PycharmProjects\PythonProject1\data\{game_version}.
         minutes, seconds = divmod(length / map_count[name], 60)
         map_avg_length[name] = f"{int(minutes)}m{int(round(seconds, 0))}s"
     index = 0
-    for count, wins in sort_dict_by_nested_value(win_team_per_player_count, 'fiend').items():
-        index = index + 1
-        print(f"{index}. {count}: {calculate_percentages(wins, True)}")
+    print("win team percent per player count")
+
+    win_team_per_player_count_percentage = {}
+    for count, wins in win_team_per_player_count.items():
+        win_team_per_player_count_percentage[count] = calculate_percentages(wins, True)
+    for count, wins in sort_dict_by_nested_value(win_team_per_player_count_percentage, "traitor", True).items():
+        index += 1
+        print(f"{index}. {count}: {wins}")
+    index = 0
     print(f"avg win length when team: {avg_team_win_length}")
     print(f"total_rounds: {total_rounds}")
     print(f"avg game lengt by map: {map_avg_length}")
@@ -128,11 +141,16 @@ with (open(fr'C:\Users\jacta\PycharmProjects\PythonProject1\data\{game_version}.
     minutes, remaining_seconds = divmod((avg_game_length/total_rounds)/20, 60)
     print(f"avg game length: {minutes}m{remaining_seconds}s")
     index = 0
-    for name, wins in sort_dict_by_nested_value(map_role_wins, "traitor").items():
-        index = index + 1
-        print(f"{index}. {name}: {calculate_percentages(wins, True)}")
+    print("role win % by map:")
+    map_role_wins_percentage = {}
+    for name, wins in map_role_wins.items():
+        map_role_wins_percentage[name] = calculate_percentages(wins, True)
+    for name, wins in sort_dict_by_nested_value(map_role_wins_percentage, "fiend", True).items():
+        index += 1
+        print(f"{index}. {name}: {wins}")
+    index = 0
     for count, lengths in game_length_per_count.items():
-        if len(lengths) % 2 == 0:  # Even-length list
+        if len(lengths) % 2 == 0:
             if len(lengths) < 2:
                 continue
             middle_left = lengths[(len(lengths) // 2) - 1]
@@ -152,5 +170,7 @@ with (open(fr'C:\Users\jacta\PycharmProjects\PythonProject1\data\{game_version}.
     print(f"Game length per playercount: {sort_dict_by_key(game_length_per_count_formatted)}")
     print(f"player count count: {sort_dict_by_key(player_count_count)}")
     print(f"median player count per length: {sort_dict_by_key(median_game_length_per_count)}")
-
+    print(f"most played map per player count:")
+    for count, meowdict in sort_dict_by_key(most_played_map_per_player_count).items():
+        print(f"{count}: {sort(calculate_percentages(meowdict, True))}")
 
