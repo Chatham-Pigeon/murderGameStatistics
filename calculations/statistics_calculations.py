@@ -57,6 +57,7 @@ with open(f'../data/{game_version}.statistics.txt', 'r') as f:
     players_kills_rate = {}
     players_kills_rate_percent = {}
     players_healed_amt = {}
+    peak = 0
     count = 0
     for i in f:
         count += 1
@@ -95,12 +96,13 @@ with open(f'../data/{game_version}.statistics.txt', 'r') as f:
             players_healed_amt[stats['name']] = 0
 
 
+
         if 'bowsShot' in stats:
-            total_shots += 1
-            players_bow_rate[stats['name']]['shot'] += 1
+            total_shots += stats['bowsShot']
+            players_bow_rate[stats['name']]['shot'] += stats['bowsShot']
         if 'bowsLanded' in stats:
-            total_hits += 1
-            players_bow_rate[stats['name']]['hit'] += 1
+            total_hits += stats['bowsLanded']
+            players_bow_rate[stats['name']]['hit'] += stats['bowsLanded']
         if stats["alive"] == 'true':
             player_won_count += 1
             players_win_rate[stats['name']]['won'] += 1
@@ -113,8 +115,10 @@ with open(f'../data/{game_version}.statistics.txt', 'r') as f:
         players_win_rate[stats['name']]['games'] += 1
         if 'playersKilled' in stats:
             players_kills_rate[stats['name']]['kills']  += stats['playersKilled']
-        if 'totalDamageDealt' in stats:
-            players_healed_amt[stats['name']] += stats['totalDamageDealt']
+        if 'damageReceived' in stats:
+            players_healed_amt[stats['name']] += stats['damageReceived']
+            if stats['damageReceived'] > peak:
+                peak = stats['damageReceived']
 
 
     print(alive_count)
@@ -151,14 +155,18 @@ with open(f'../data/{game_version}.statistics.txt', 'r') as f:
     index = 0
     for name, data in players_bow_rate.items():
         index += 1
+        if time_played[name] < 72000:
+            index += -1
+            continue
+        if players_bow_rate[name]['shot'] < 300:
+            index += -1
+            continue
         if data['hit'] > 0 and data['shot'] > 0:
-            players_bow_rate_percent[name] = data['shot'] / (data['shot'] + data['hit']) * 100
+            players_bow_rate_percent[name] = data['hit'] / data['shot'] * 100
     index = 0
     for name, data in sort(players_bow_rate_percent).items():
         index += 1
-        if index > 11:
-            break
-        print(f"{index}. {name}: {data}")
+        print(f"{index}. {name}: {data} ({players_bow_rate[name]['hit']}/{players_bow_rate[name]['shot']})")
     print("TIME PLAYED!!")
     index = 0
     for name, time in sort(time_played).items():
@@ -179,11 +187,18 @@ with open(f'../data/{game_version}.statistics.txt', 'r') as f:
             break
         print(f"{index}. {name}: {data} ({int(players_kills_rate[name]['kills'])}/{int(players_kills_rate[name]['deaths'])})")
     index = 0
-    for name, amt in sort(players_healed_amt).items():
+    for name, data in sort_dict_by_nested_value(players_kills_rate, "kills").items():
+        index +=1
+        if index > 26:
+            break
+        print(f"{index}. {name}: {data['kills']}")
+    index = 0
+    for name, amt in sort(players_bow_rate).items():
         index += 1
         if index > 26:
             break
-        print(f"{index}. {name}")
+        print(f"{index}. {name} {amt}")
+print(peak)
 
 
 
