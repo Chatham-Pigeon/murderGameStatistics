@@ -5,6 +5,8 @@ from discord.ext import commands
 from discord.ext.commands import Context
 
 import config
+from helper_functions import get_last_message, set_last_message
+
 
 def parse_purchase_message(message: str):
     # original message formatted in (1.0) YEAR/MM/DD HH:MMA/PM ROLE: [item, item, item]
@@ -38,30 +40,23 @@ class purchase_data_cog(commands.Cog):
     @commands.command()
     async def pbacklog(self, ctx: Context, add_reaction: bool = False):
         total_added = 0
-        total_not_added = 0
         channel: discord.TextChannel = self.bot.get_channel(config.PURCHASE_STATS_CHANNEL)
-        saw_reaction = False
+        this_last_seen = get_last_message(config.PURCHASE_STATS_CHANNEL)
         await ctx.reply("okay! look in console for processing info")
         async for message in channel.history(limit=None):
-            if message.id == 1395379386051596339:
+            if message.id == this_last_seen:
                 break
-            for reaction in message.reactions:
-                if reaction.emoji == "✅":
-                    saw_reaction = True
-                    break
-            if saw_reaction is False or 1 == 1:
-                total_added = total_added + 1
-                bought_items, role, data_version = parse_purchase_message(message.content)
-                with open(f'data/{data_version}.purchases.txt', 'a') as file:
-                    file.write(f'{role}:{" ".join(bought_items)}\n')
-                if add_reaction:  # only show if enabled, adding reaction slows code down largely
-                    await message.add_reaction("✅")
-                print(f"{total_added} ADDED: {message.content}")
-            else:
-                total_not_added = total_not_added + 1
-                print(f"{total_not_added} NOT ADDED: {message.content}")
-        await ctx.reply(
-            f"Done! found {total_added} new data points, found {total_not_added} already added data points.")
+            if total_added == 0:
+                new_last_seen = message.id
+            total_added += 1
+            bought_items, role, data_version = parse_purchase_message(message.content)
+            if data_version == "0.0":
+                break
+            with open(f'data/{data_version}.purchases.txt', 'a') as file:
+                file.write(f'{role}:{" ".join(bought_items)}\n')
+            print(f"{total_added} ADDED: {message.content}")
+        await ctx.reply(f"Done! found {total_added} new data points")
+        set_last_message(config.PURCHASE_STATS_CHANNEL, new_last_seen)
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):

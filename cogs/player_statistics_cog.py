@@ -23,12 +23,11 @@ class player_statistics_cog(commands.Cog):
     async def sbacklog(self, ctx, add_reaction: bool = False):
         total_added = 0
         channel = self.bot.get_channel(config.PLAYER_STATISTICS_CHANNEL)
-        await ctx.reply("okay! look in console for processing info")
         this_last_seen = get_last_message(config.PLAYER_STATISTICS_CHANNEL)
+        await ctx.reply("okay! look in console for processing info")
         async for msg in channel.history(limit=None):
             message: discord.Message = msg
             message_content: str = message.content
-            total_added = total_added + 1
             if message_content.startswith("("):
                 data_version = message_content.split(" ")[0].replace("(", "").replace(")", "")
             else:
@@ -38,6 +37,7 @@ class player_statistics_cog(commands.Cog):
                 break
             if total_added == 0:
                 new_last_seen = message.id
+            total_added += 1
             with open(f'data/{data_version}.statistics.txt', 'a') as file:
                 file.write(f'{message.content}\n')
             if add_reaction:  # only show if enabled, adding reaction slows code down largely
