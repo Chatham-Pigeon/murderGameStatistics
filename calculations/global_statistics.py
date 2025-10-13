@@ -33,7 +33,6 @@ def parse_message(content):
 all_stats = []
 game_version = "1.0"
 games_played = 0
-player = input("Player: ")
 with open(f'../data/{game_version}.statistics.txt', 'r') as f:
     #initalizing variables
     health_healed = 0

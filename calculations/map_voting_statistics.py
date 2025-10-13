@@ -2,7 +2,10 @@ def calculate_percentages(items, should_round: bool = False):
     new_percentages = {}
     total = sum(value for value in items.values())
     for key, value in items.items():
-        new_percentages[key] = (value / total) * 100
+        try:
+            new_percentages[key] = (value / total) * 100
+        except ZeroDivisionError as e:
+            new_percentages[key] = 0
         if should_round is True:
             new_percentages[key] = round(new_percentages[key], 2)
     return new_percentages
@@ -39,19 +42,34 @@ with (open(fr'C:\Users\jacta\PycharmProjects\PythonProject1\data\{game_version}.
     total_vote_count = 0
     rounds = 0
     total_vote_percent = 0
+    avg_vote_percent_per_map = {}
+    map_seen_count = {}
     for i in file:
         rounds += 1
         voting_dict, player_count = parse_voting_message(i)
         total_round_votes = 0
+        voting_dict_percent = calculate_percentages(voting_dict, False)
         for name, count in voting_dict.items():
             total_vote_count += count
             total_round_votes += count
             if name not in total_votes:
                 total_votes[name] = 0
+            if name not in map_seen_count:
+                map_seen_count[name] = 0
+            map_seen_count[name] += 1
+            if name not in avg_vote_percent_per_map:
+                avg_vote_percent_per_map[name] = 0
+            avg_vote_percent_per_map[name] += voting_dict_percent[name]
             total_votes[name] += count
         total_vote_percent += total_round_votes / player_count * 100
-        print(total_vote_percent)
+#
+
+
 print(sort(total_votes))
 print(f"TOTAL VOTE COUNT: {total_vote_count}")
 print(f"vote % {total_vote_percent / rounds}")
-
+print("avg % of vote share when available to vote")
+idx = 0
+for name, percent in sort(avg_vote_percent_per_map).items():
+    idx += 1
+    print(f"{idx}. {name}: {percent / map_seen_count[name]}")

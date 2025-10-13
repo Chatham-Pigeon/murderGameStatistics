@@ -18,7 +18,8 @@ def sort_dict_by_key(meow):
 
 def sort_dict_by_nested_value(items, key, reverse=True):
     return dict(sorted(items.items(), key=lambda x: x[1].get(key, 0), reverse=reverse))
-game_version = "1.0"
+game_version = "21.8"
+#game_version = "1.0"
 with (open(fr'C:\Users\jacta\PycharmProjects\PythonProject1\data\{game_version}.map_data.txt', 'r') as file):
     fiend_role_wins = {"traitor": 0, "innocents": 0}
     win_dict = {"traitor": 0, "innocents": 0, "fiend": 0}
@@ -34,7 +35,19 @@ with (open(fr'C:\Users\jacta\PycharmProjects\PythonProject1\data\{game_version}.
     median_game_length_per_count = {}
     win_team_per_player_count = {}
     most_played_map_per_player_count = {}
+    count = 0
+    last_win_team = ""
+    innocent_streak = 0
+    traitor_streak = 0
+    fiend_streak = 0
+    high_inno_streak = 0
+    high_traitor_streak = 0
+    high_fiend_streak = 0
+    inno_where = 0
+    trait_where = 0
+    fiend_where = 0
     for i in file:
+        count += 1
         game_round, map_name, win_team, fiend_win, game_length, player_count, fiend_count = i.split(" ")
         if win_team == 'Traitors':
             win_team = 'traitor'
@@ -42,6 +55,45 @@ with (open(fr'C:\Users\jacta\PycharmProjects\PythonProject1\data\{game_version}.
             win_team = "innocents"
         if map_name == "Forst_Mansion":
             map_name = "Forest_Mansion"
+        streak_win_team = win_team
+        if fiend_win == 'true':
+            streak_win_team = 'fiend'
+        if streak_win_team == last_win_team:
+            if int(player_count) >= 7:
+                if streak_win_team == "traitor":
+                    traitor_streak += 1
+                if streak_win_team == "innocents":
+                    innocent_streak += 1
+                if streak_win_team == "fiend":
+                    fiend_streak += 1
+            else:
+                if traitor_streak >= high_traitor_streak:
+                    high_traitor_streak = traitor_streak + 1
+                    trait_where = game_round
+                if innocent_streak >= high_inno_streak:
+                    high_inno_streak = innocent_streak + 1
+                    inno_where = game_round
+                if fiend_streak >= high_fiend_streak:
+                    high_fiend_streak = fiend_streak + 1
+                    fiend_where = game_round
+                traitor_streak = 0
+                innocent_streak = 0
+                fiend_streak = 0
+        else:
+            if traitor_streak >= high_traitor_streak:
+                high_traitor_streak = traitor_streak + 1
+                trait_where = game_round
+            if innocent_streak >= high_inno_streak:
+                high_inno_streak = innocent_streak + 1
+                inno_where = game_round
+            if fiend_streak >= high_fiend_streak:
+                high_fiend_streak = fiend_streak + 1
+                fiend_where = game_round
+            traitor_streak = 0
+            innocent_streak = 0
+            fiend_streak = 0
+
+        last_win_team = streak_win_team
         inted_player_count = int(player_count)
         if inted_player_count not in game_length_per_count:
             game_length_per_count[int(player_count)] = [int(game_length)]
@@ -60,8 +112,7 @@ with (open(fr'C:\Users\jacta\PycharmProjects\PythonProject1\data\{game_version}.
                 most_played_map_per_player_count[inted_player_count][map_name] = 1
             else:
                 most_played_map_per_player_count[inted_player_count][map_name] += 1
-        if int(player_count) < 7:
-            continue
+
         if inted_player_count not in win_team_per_player_count.keys():
             win_team_per_player_count[inted_player_count] = {"traitor": 0, "innocents": 0, "fiend": 0}
             if fiend_win == 'true':
@@ -73,6 +124,8 @@ with (open(fr'C:\Users\jacta\PycharmProjects\PythonProject1\data\{game_version}.
                 win_team_per_player_count[inted_player_count]['fiend'] = win_team_per_player_count[inted_player_count]['fiend'] + 1
             else:
                 win_team_per_player_count[inted_player_count][win_team] = win_team_per_player_count[inted_player_count][win_team] + 1
+        if int(player_count) < 7:
+            continue
         avg_game_length = avg_game_length + int(game_length)
         total_rounds = total_rounds + 1
         if fiend_win == 'true':
@@ -122,11 +175,10 @@ with (open(fr'C:\Users\jacta\PycharmProjects\PythonProject1\data\{game_version}.
         map_avg_length[name] = f"{int(minutes)}m{int(round(seconds, 0))}s"
     index = 0
     print("win team percent per player count")
-
     win_team_per_player_count_percentage = {}
     for count, wins in win_team_per_player_count.items():
         win_team_per_player_count_percentage[count] = calculate_percentages(wins, True)
-    for count, wins in sort_dict_by_nested_value(win_team_per_player_count_percentage, "traitor", True).items():
+    for count, wins in sort_dict_by_key(win_team_per_player_count_percentage).items():
         index += 1
         print(f"{index}. {count}: {wins}")
     index = 0
@@ -173,4 +225,10 @@ with (open(fr'C:\Users\jacta\PycharmProjects\PythonProject1\data\{game_version}.
     print(f"most played map per player count:")
     for count, meowdict in sort_dict_by_key(most_played_map_per_player_count).items():
         print(f"{count}: {sort(calculate_percentages(meowdict, True))}")
+    print(f"BIG INNO STREAK: {high_inno_streak}")
+    print(f"BIG TRAITOR STREAK: {high_traitor_streak}")
+    print(f"BIG FIEND STREAK: {high_fiend_streak}")
+
+    print(f"trait where {trait_where} inno where: {inno_where} fiend where: {fiend_where}")
+
 

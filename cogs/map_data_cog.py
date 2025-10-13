@@ -1,7 +1,10 @@
 import discord
 from discord.ext import commands
+from datetime import datetime
 
 import config
+from helper_functions import get_last_message, set_last_message
+
 
 def parse_map_message(content: str):
     # (1.0) 2025/5/28 09:53AM 6747: The Aquarium:innocents:true:163:1:0
@@ -31,19 +34,47 @@ class map_data_cog(commands.Cog):
         total_added = 0
         total_not_added = 0
         channel = self.bot.get_channel(config.ROUNDS_STATS_CHANNEL)
+        this_last_seen = get_last_message(config.ROUNDS_STATS_CHANNEL)
         await ctx.reply("okay! look in console for processing info")
         async for message in channel.history(limit=None):
-            total_added = total_added + 1
             data, game_version = parse_map_message(message.content)
             if game_version == "0.0":
                 break
+            if message.id == this_last_seen:
+                break
+            if total_added == 0:
+                new_last_seen = message.id
             with open(f'data/{game_version}.map_data.txt', 'a') as file:
                 file.write(f'{" ".join(data)}\n')
-            if add_reaction:  # only show if enabled, adding reaction slows code down largely
-                await message.add_reaction("✅")
+            total_added = total_added + 1
             print(f"{total_added} ADDED: {message.content}")
         await ctx.reply(
             f"Done! found {total_added} new data points, found {total_not_added} already added data points.")
+        set_last_message(config.ROUNDS_STATS_CHANNEL, new_last_seen)
+
+
+    @commands.command()
+    async def datedbacklog(self, ctx, add_reaction: bool = False):
+        total_added = 0
+        total_not_added = 0
+        bye = 0
+        channel = self.bot.get_channel(config.ROUNDS_STATS_CHANNEL)
+        await ctx.reply("okay! look in console for processing info")
+        async for message in channel.history(limit=None):
+            message: discord.Message = message
+            data, game_version = parse_map_message(message.content)
+            for reaction in message.reactions:
+                if reaction.emoji == "8️⃣":
+                    bye = 1
+                    break
+            if bye == 1:
+                break
+            with open(f'data/21.8.map_data.txt', 'a') as file:
+                file.write(f'{" ".join(data)}\n')
+            total_added = total_added + 1
+            print(f"{total_added} ADDED: {message.content}")
+        await ctx.reply(f"Done! found {total_added} new data points, found {total_not_added} already added data points.")
+
 
     @commands.command()
     async def mreload(self, ctx):

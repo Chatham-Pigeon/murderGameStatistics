@@ -45,7 +45,9 @@ with open(f'../data/{game_version}.statistics.txt', 'r') as f:
     bow_shots = 0
     bow_hits = 0
     played_maps = {}
-    # combining all the data
+    melee_hits = 0
+    melee_attempts = 0
+    role_win_data = {"innocent": {"wins": 0, "losses": 0}, "detective": {"wins": 0, "losses": 0}, "traitor": {"wins": 0, "losses": 0}, "accomplice": {"wins": 0, "losses": 0}, "fiend": {"wins": 0, "losses": 0}, "doctor": {"wins": 0, "losses": 0}}    # combining all the data
     for data in f:
         if game_version == "0.0":
             data = f"(0.0) {data}"
@@ -63,8 +65,10 @@ with open(f'../data/{game_version}.statistics.txt', 'r') as f:
 
         if stats['alive'] == "true":
             wins += 1
+            role_win_data[stats['role']]['wins'] += 1
         else:
             losses += 1
+            role_win_data[stats['role']]['losses'] += 1
         if 'timeAlive' in stats:
             total_time_alive += stats['timeAlive']
 
@@ -77,6 +81,10 @@ with open(f'../data/{game_version}.statistics.txt', 'r') as f:
             bow_shots += stats['bowsShot']
         if 'bowsLanded' in stats:
             bow_hits += stats['bowsLanded']
+        if 'meleeSucesses' in stats:
+            melee_hits += stats['meleeSucesses']
+            melee_attempts += stats['meleeAttempts']
+
 
 # calculating information from data
 highest_count = 0
@@ -102,7 +110,7 @@ print(f"Least played map: {"NOTHING I CBF!!"}")
 print(f"Total Wins: {wins}")
 print(f"Total Losses: {losses}")
 print(f"Win Loss Ratio: {wins / losses}")
-print(f"Win percentage: {wins / games_played * 100}")
+print(f"Win percentage: {wins / (wins + losses) * 100}")
 print(f"Total Time spent alive {round(total_time_alive / 20 / 60 / 60, 2)}h")
 print(f"Average time spent alive {round(total_time_alive / games_played / 20 / 60, 2)}m")
 print(f"Total kills {kills}")
@@ -113,3 +121,8 @@ print(f"Bow Shots {bow_shots}")
 print(f"Bow Hits {bow_hits}")
 print(f"Bow Percent {bow_hits / bow_shots * 100}")
 print(f"bow Rate {bow_hits / bow_shots}")
+print(f"melee attempts: {melee_attempts}")
+print(f"melee successes: {melee_hits}")
+print(f"melee percent {melee_hits / melee_attempts * 100}")
+for role, role_data in role_win_data.items():
+    print(f"{role} WIN PERCENT: {calculate_percentages(role_data, True)}")
