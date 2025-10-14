@@ -16,7 +16,7 @@ bot = commands.Bot(command_prefix='!', intents=intents, help_command=None)
 async def on_ready():
     await bot.get_channel(config.TESTING_CHANNEL).send("bot ready!")
 
-initial_extensions = ['cogs.purchase_data_cog', 'cogs.map_data_cog', 'cogs.player_statistics_cog', 'cogs.map_voting_cog', 'cogs.player_data_cog']
+initial_extensions = ['cogs.purchase_data_cog', 'cogs.map_data_cog', 'cogs.player_statistics_cog', 'cogs.map_voting_cog', 'cogs.player_data_cog', 'cogs.evil_data']
 async def main():
     for extension in initial_extensions:
         try:
