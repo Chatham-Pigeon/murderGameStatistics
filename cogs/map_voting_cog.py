@@ -29,5 +29,26 @@ class map_voting_cog(commands.Cog):
         set_last_message(config.VOTING_STATS_CHANNEL, new_last_seen)
         await ctx.reply(f"DONE! found {total_added} new data points")
 
+    @commands.command()
+    async def vdatedbacklog(self, ctx, add_reaction: bool = False):
+        total_added = 0
+        total_not_added = 0
+        bye = 0
+        channel = self.bot.get_channel(config.VOTING_STATS_CHANNEL)
+        await ctx.reply("okay! look in console for processing info")
+        async for message in channel.history(limit=None):
+            message: discord.Message = message
+            for reaction in message.reactions:
+                if reaction.emoji == "8️⃣":
+                    bye = 1
+                    break
+            if bye == 1:
+                break
+            data_version = message.content.split(" ")[0].replace("(", "").replace(")", "")
+            with open(f'data/2weeks.voting_data.txt', 'a') as file:
+                file.write(f'{message.content}\n')
+            print(f"{total_added} ADDED: {message.content}")
+        await ctx.reply(f"Done! found {total_added} new data points, found {total_not_added} already added data points.")
+
 async def setup(bot):
     await bot.add_cog(map_voting_cog(bot))

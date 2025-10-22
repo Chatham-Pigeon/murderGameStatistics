@@ -46,6 +46,8 @@ with (open(fr'C:\Users\jacta\PycharmProjects\PythonProject1\data\{game_version}.
     inno_where = 0
     trait_where = 0
     fiend_where = 0
+    shortest_length = {}
+    shortest_length_where = {}
     for i in file:
         count += 1
         game_round, map_name, win_team, fiend_win, game_length, player_count, fiend_count = i.split(" ")
@@ -55,6 +57,13 @@ with (open(fr'C:\Users\jacta\PycharmProjects\PythonProject1\data\{game_version}.
             win_team = "innocents"
         if map_name == "Forst_Mansion":
             map_name = "Forest_Mansion"
+        if int(player_count) not in shortest_length:
+            shortest_length[int(player_count)] = int(game_length)
+            shortest_length_where[int(player_count)] = game_round
+        if shortest_length[int(player_count)] > int(game_length):
+            shortest_length[int(player_count)] = int(game_length)
+            shortest_length_where[int(player_count)] = game_round
+
         streak_win_team = win_team
         if fiend_win == 'true':
             streak_win_team = 'fiend'
@@ -164,6 +173,7 @@ with (open(fr'C:\Users\jacta\PycharmProjects\PythonProject1\data\{game_version}.
 
 
 
+
     for name, length in avg_team_win_length.items():
         length = (length / 20)
         minutes, seconds = divmod(length / win_dict[name], 60)
@@ -228,7 +238,8 @@ with (open(fr'C:\Users\jacta\PycharmProjects\PythonProject1\data\{game_version}.
     print(f"BIG INNO STREAK: {high_inno_streak}")
     print(f"BIG TRAITOR STREAK: {high_traitor_streak}")
     print(f"BIG FIEND STREAK: {high_fiend_streak}")
-
     print(f"trait where {trait_where} inno where: {inno_where} fiend where: {fiend_where}")
+    print(f"short game length: {sort(shortest_length)}")
+    print(f"short game length wher {shortest_length_where}")
 
 

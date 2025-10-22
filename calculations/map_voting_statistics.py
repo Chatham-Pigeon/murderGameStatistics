@@ -36,7 +36,7 @@ def parse_voting_message(message: str):
         map_name, vote_count = i.split(",")
         voting_data[map_name] = int(vote_count)
     return voting_data, int(player_count)
-game_version = "1.0"
+game_version = "2weeks"
 with (open(fr'C:\Users\jacta\PycharmProjects\PythonProject1\data\{game_version}.voting_data.txt', 'r') as file):
     total_votes = {}
     total_vote_count = 0

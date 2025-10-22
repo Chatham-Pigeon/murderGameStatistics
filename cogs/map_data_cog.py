@@ -54,7 +54,7 @@ class map_data_cog(commands.Cog):
 
 
     @commands.command()
-    async def datedbacklog(self, ctx, add_reaction: bool = False):
+    async def mdatedbacklog(self, ctx, add_reaction: bool = False):
         total_added = 0
         total_not_added = 0
         bye = 0
