@@ -44,12 +44,15 @@ with (open(fr'C:\Users\jacta\PycharmProjects\PythonProject1\data\{game_version}.
     total_vote_percent = 0
     avg_vote_percent_per_map = {}
     map_seen_count = {}
+    maps = []
     for i in file:
         rounds += 1
         voting_dict, player_count = parse_voting_message(i)
         total_round_votes = 0
         voting_dict_percent = calculate_percentages(voting_dict, False)
         for name, count in voting_dict.items():
+            if name not in maps:
+                maps.append(name)
             total_vote_count += count
             total_round_votes += count
             if name not in total_votes:
@@ -73,3 +76,4 @@ idx = 0
 for name, percent in sort(avg_vote_percent_per_map).items():
     idx += 1
     print(f"{idx}. {name}: {percent / map_seen_count[name]}")
+print(", ".join(maps))

@@ -69,7 +69,7 @@ class map_data_cog(commands.Cog):
                     break
             if bye == 1:
                 break
-            with open(f'data/21.8.map_data.txt', 'a') as file:
+            with open(f'data/lastmonth.map_data.txt', 'a') as file:
                 file.write(f'{" ".join(data)}\n')
             total_added = total_added + 1
             print(f"{total_added} ADDED: {message.content}")

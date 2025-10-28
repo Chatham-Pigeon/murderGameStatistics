@@ -1,7 +1,7 @@
 import ast
 from datetime import datetime
 
-def sort(items):s
+def sort(items):
     return dict(sorted(items.items(), key=lambda x: x[1], reverse=True))
 def sort_dict_by_key(meow):
     return dict(sorted(meow.items(), reverse=True))
