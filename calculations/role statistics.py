@@ -34,7 +34,7 @@ all_stats = []
 game_version = "1.0"
 games_played = 0
 player = input("role: ")
-with open(f'../data/{game_version}.statistics.txt', 'r') as f:
+with open(f'../old_data/{game_version}.statistics.txt', 'r') as f:
     #initalizing variables
     health_healed = 0
     wins = 0
@@ -47,7 +47,7 @@ with open(f'../data/{game_version}.statistics.txt', 'r') as f:
     played_maps = {}
     melee_hits = 0
     melee_attempts = 0
-    role_win_data = {"innocent": {"wins": 0, "losses": 0}, "detective": {"wins": 0, "losses": 0}, "traitor": {"wins": 0, "losses": 0}, "accomplice": {"wins": 0, "losses": 0}, "fiend": {"wins": 0, "losses": 0}, "doctor": {"wins": 0, "losses": 0}}    # combining all the data
+    role_win_data = {"innocent": {"wins": 0, "losses": 0}, "detective": {"wins": 0, "losses": 0}, "traitor": {"wins": 0, "losses": 0}, "accomplice": {"wins": 0, "losses": 0}, "fiend": {"wins": 0, "losses": 0}, "doctor": {"wins": 0, "losses": 0}}    # combining all the old_data
     for data in f:
         if game_version == "0.0":
             data = f"(0.0) {data}"
@@ -86,7 +86,7 @@ with open(f'../data/{game_version}.statistics.txt', 'r') as f:
             melee_attempts += stats['meleeAttempts']
 
 
-# calculating information from data
+# calculating information from old_data
 highest_count = 0
 most_played_maps = []
 for map_name, count in played_maps.items():
@@ -102,7 +102,7 @@ for map_name, count in played_maps.items():
 if len(most_played_maps) == 1:
     most_played_maps = most_played_maps[0]
 # ['healthHealed', 'map', 'name', 'role', 'alive', 'damageReceived', 'totalDamageDealt', 'bowsShot', 'bowsLanded', 'timeAlive', 'playersKilled', 'meleeAttempts']
-# displaying data
+# displaying old_data
 print(f"Total Health Healed: {health_healed}")
 print(f"Average Health healed: {health_healed / games_played}")
 print(f"Most played map {most_played_maps}")

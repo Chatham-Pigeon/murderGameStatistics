@@ -44,12 +44,12 @@ class map_data_cog(commands.Cog):
                 break
             if total_added == 0:
                 new_last_seen = message.id
-            with open(f'data/{game_version}.map_data.txt', 'a') as file:
+            with open(f'old_data/{game_version}.map_data.txt', 'a') as file:
                 file.write(f'{" ".join(data)}\n')
             total_added = total_added + 1
             print(f"{total_added} ADDED: {message.content}")
         await ctx.reply(
-            f"Done! found {total_added} new data points, found {total_not_added} already added data points.")
+            f"Done! found {total_added} new old_data points, found {total_not_added} already added old_data points.")
         set_last_message(config.ROUNDS_STATS_CHANNEL, new_last_seen)
 
 
@@ -69,23 +69,23 @@ class map_data_cog(commands.Cog):
                     break
             if bye == 1:
                 break
-            with open(f'data/lastmonth.map_data.txt', 'a') as file:
+            with open(f'old_data/lastmonth.map_data.txt', 'a') as file:
                 file.write(f'{" ".join(data)}\n')
             total_added = total_added + 1
             print(f"{total_added} ADDED: {message.content}")
-        await ctx.reply(f"Done! found {total_added} new data points, found {total_not_added} already added data points.")
+        await ctx.reply(f"Done! found {total_added} new old_data points, found {total_not_added} already added old_data points.")
 
 
     @commands.command()
     async def mreload(self, ctx):
         self.bot.reload_extension(f'cogs.map_data_cog')
-        await ctx.send(f'Reloaded map data ')
+        await ctx.send(f'Reloaded map old_data ')
     @commands.Cog.listener()
     async def on_message(self, message = discord.Message):
         if message.author.id == config.ROUNDS_STATS_WEBHOOK_ID:
             return
             data = parse_map_message(message.content)
-            with open('data/map_data.txt', 'a') as file:
+            with open('old_data/map_data.txt', 'a') as file:
                 file.write(f'{" ".join(data)}\n')
             await message.add_reaction("✅")
 

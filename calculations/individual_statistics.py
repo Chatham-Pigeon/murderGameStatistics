@@ -31,10 +31,11 @@ def parse_message(content):
         statistics[f"{j[0]}"] = value
     return statistics
 all_stats = []
-game_version = "1.0"
 games_played = 0
+game_version = "1.0"
+file_name = '3d.player-statistics-data'
 player = input("Player: ")
-with open(f'../data/{game_version}.statistics.txt', 'r') as f:
+with open(f'../new_data/{file_name}.txt', 'r') as f:
     #initalizing variables
     health_healed = 0
     wins = 0
@@ -47,7 +48,7 @@ with open(f'../data/{game_version}.statistics.txt', 'r') as f:
     played_maps = {}
     melee_hits = 0
     melee_attempts = 0
-    role_win_data = {"innocent": {"wins": 0, "losses": 0}, "detective": {"wins": 0, "losses": 0}, "traitor": {"wins": 0, "losses": 0}, "accomplice": {"wins": 0, "losses": 0}, "fiend": {"wins": 0, "losses": 0}, "doctor": {"wins": 0, "losses": 0}}    # combining all the data
+    role_win_data = {"innocent": {"wins": 0, "losses": 0}, "detective": {"wins": 0, "losses": 0}, "traitor": {"wins": 0, "losses": 0}, "accomplice": {"wins": 0, "losses": 0}, "fiend": {"wins": 0, "losses": 0}, "doctor": {"wins": 0, "losses": 0}}    # combining all the old_data
     for data in f:
         if game_version == "0.0":
             data = f"(0.0) {data}"
@@ -86,7 +87,7 @@ with open(f'../data/{game_version}.statistics.txt', 'r') as f:
             melee_attempts += stats['meleeAttempts']
 
 
-# calculating information from data
+# calculating information from old_data
 highest_count = 0
 most_played_maps = []
 for map_name, count in played_maps.items():
@@ -102,7 +103,7 @@ for map_name, count in played_maps.items():
 if len(most_played_maps) == 1:
     most_played_maps = most_played_maps[0]
 # ['healthHealed', 'map', 'name', 'role', 'alive', 'damageReceived', 'totalDamageDealt', 'bowsShot', 'bowsLanded', 'timeAlive', 'playersKilled', 'meleeAttempts']
-# displaying data
+# displaying old_data
 print(f"Total Health Healed: {health_healed}")
 print(f"Average Health healed: {health_healed / games_played}")
 print(f"Most played map {most_played_maps}")
@@ -126,3 +127,7 @@ print(f"melee successes: {melee_hits}")
 print(f"melee percent {melee_hits / melee_attempts * 100}")
 for role, role_data in role_win_data.items():
     print(f"{role} WIN PERCENT: {calculate_percentages(role_data, True)}")
+role_played = {}
+for role, role_data in role_win_data.items():
+    role_played[role] = role_data['wins'] + role_data['losses']
+print(calculate_percentages(role_played))

@@ -52,10 +52,10 @@ class purchase_data_cog(commands.Cog):
             bought_items, role, data_version = parse_purchase_message(message.content)
             if data_version == "0.0":
                 break
-            with open(f'data/{data_version}.purchases.txt', 'a') as file:
+            with open(f'old_data/{data_version}.purchases.txt', 'a') as file:
                 file.write(f'{role}:{" ".join(bought_items)}\n')
             print(f"{total_added} ADDED: {message.content}")
-        await ctx.reply(f"Done! found {total_added} new data points")
+        await ctx.reply(f"Done! found {total_added} new old_data points")
         set_last_message(config.PURCHASE_STATS_CHANNEL, new_last_seen)
 
     @commands.Cog.listener()
@@ -63,7 +63,7 @@ class purchase_data_cog(commands.Cog):
         if message.author.id == config.PURCHASE_STATS_WEBHOOK_ID:
             return
             bought_items, role = parse_purchase_message(message.content)
-            with open('data/purchases.txt', 'a') as file:
+            with open('old_data/purchases.txt', 'a') as file:
                 file.write(f'{role}:{" ".join(bought_items)}\n')
             await message.add_reaction("✅")
 

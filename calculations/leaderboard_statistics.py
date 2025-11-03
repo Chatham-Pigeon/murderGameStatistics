@@ -31,15 +31,16 @@ def parse_message(content):
             value = f"{value}"
         statistics[f"{j[0]}"] = value
     return statistics
+
 game_version = "1.0"
 total_games_played = 0
-with open(f'../data/{game_version}.statistics.txt', 'r') as f:
+with open(f'../old_data/{game_version}.statistics.txt', 'r') as f:
     #initalizing variables
     health_healed = {}
     games_played = {}
     bows_shot = {}
     bows_hit = {}
-    # combining all the data
+    # combining all the old_data
     for data in f:
         if game_version == "0.0":
             data = f"(0.0) {data}"

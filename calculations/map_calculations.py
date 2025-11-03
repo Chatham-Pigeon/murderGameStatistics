@@ -19,7 +19,7 @@ def sort_dict_by_key(meow):
 def sort_dict_by_nested_value(items, key, reverse=True):
     return dict(sorted(items.items(), key=lambda x: x[1].get(key, 0), reverse=reverse))
 game_version = "lastmonth"
-with (open(fr'C:\Users\jacta\PycharmProjects\PythonProject1\data\{game_version}.map_data.txt', 'r') as file):
+with (open(fr'C:\Users\jacta\PycharmProjects\PythonProject1\new_data\3d.round-data.txt', 'r') as file):
     fiend_role_wins = {"traitor": 0, "innocents": 0}
     win_dict = {"traitor": 0, "innocents": 0, "fiend": 0}
     map_count = {}

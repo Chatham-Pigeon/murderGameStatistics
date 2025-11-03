@@ -33,7 +33,7 @@ def parse_message(content):
 all_stats = []
 game_version = "1.0"
 games_played = 0
-with open(f'../data/{game_version}.statistics.txt', 'r') as f:
+with open(f'../old_data/{game_version}.statistics.txt', 'r') as f:
     #initalizing variables
     health_healed = 0
     wins = 0
@@ -44,7 +44,7 @@ with open(f'../data/{game_version}.statistics.txt', 'r') as f:
     bow_shots = 0
     bow_hits = 0
     played_maps = {}
-    # combining all the data
+    # combining all the old_data
     for data in f:
         if game_version == "0.0":
             data = f"(0.0) {data}"
@@ -75,7 +75,7 @@ with open(f'../data/{game_version}.statistics.txt', 'r') as f:
         if 'bowsLanded' in stats:
             bow_hits += stats['bowsLanded']
 
-# calculating information from data
+# calculating information from old_data
 highest_count = 0
 most_played_maps = []
 for map_name, count in played_maps.items():
@@ -91,7 +91,7 @@ for map_name, count in played_maps.items():
 if len(most_played_maps) == 1:
     most_played_maps = most_played_maps[0]
 # ['healthHealed', 'map', 'name', 'role', 'alive', 'damageReceived', 'totalDamageDealt', 'bowsShot', 'bowsLanded', 'timeAlive', 'playersKilled', 'meleeAttempts']
-# displaying data
+# displaying old_data
 print(f"Total Health Healed: {health_healed}")
 print(f"Average Health healed: {health_healed / games_played}")
 print(f"Most played map {most_played_maps}")

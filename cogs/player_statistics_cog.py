@@ -32,19 +32,19 @@ class player_statistics_cog(commands.Cog):
                 data_version = message_content.split(" ")[0].replace("(", "").replace(")", "")
             else:
                 game_version  = "0.0"
-                break # data version is 0.0... i dont need to update this data it shouldn't change
+                break # old_data version is 0.0... i dont need to update this old_data it shouldn't change
             if message.id == this_last_seen:
                 break
             if total_added == 0:
                 new_last_seen = message.id
             total_added += 1
-            with open(f'data/{data_version}.statistics.txt', 'a') as file:
+            with open(f'old_data/{data_version}.statistics.txt', 'a') as file:
                 file.write(f'{message.content}\n')
             if add_reaction:  # only show if enabled, adding reaction slows code down largely
                 await message.add_reaction("✅")
             print(f"{total_added} ADDED: {message.content}")
         # done!
-        await ctx.reply(f"Done! found {total_added} new data points")
+        await ctx.reply(f"Done! found {total_added} new old_data points")
         set_last_message(config.PLAYER_STATISTICS_CHANNEL, new_last_seen)
 
 
@@ -54,7 +54,7 @@ class player_statistics_cog(commands.Cog):
         if message.author.id == config.PURCHASE_STATS_WEBHOOK_ID:
             return
             statistics = parse_statistics_message(message.content)
-            with open('data/statistics.txt', 'a') as file:
+            with open('old_data/statistics.txt', 'a') as file:
                 #file.write(f'{role}:{" ".join(bought_items)}\n')
                 pass
             await message.add_reaction("✅")

@@ -56,7 +56,7 @@ game_version = "1.0"
 cool_people = []
 count = 0
 role_wins = {"innocent": {}, "detective": {}, "doctor": {}, "fiend": {}, "traitor": {}, "accomplice": {}}
-with open(f'../data/{game_version}.player_data.txt', 'r') as f:
+with open(f'../old_data/{game_version}.player_data.txt', 'r') as f:
     for line in f:
         count += 1
         print(count)

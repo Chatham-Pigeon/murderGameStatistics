@@ -19,7 +19,7 @@ def sort_dict_by_nested_value(items, key, reverse=True):
 def parse_voting_message(message: str):
     # (1.0) 2025/9/15 06:13PM plot: The Mineshafts,0:Mediterranean,0:Oil Rig,3:The Aquarium,1:The Depths,0:random:0#7
     data_split = message.split(":")
-    # remove the time & plot metadata, save the data version at the start but remove brackets
+    # remove the time & plot metadata, save the old_data version at the start but remove brackets
     data_version = data_split.pop(0).split(" ").pop(0).replace("(", "").replace(")", "")
     # delete the 13PM plot that is split because of the : in the time
     data_split.pop(0)
@@ -37,7 +37,7 @@ def parse_voting_message(message: str):
         voting_data[map_name] = int(vote_count)
     return voting_data, int(player_count)
 game_version = "2weeks"
-with (open(fr'C:\Users\jacta\PycharmProjects\PythonProject1\data\{game_version}.voting_data.txt', 'r') as file):
+with (open(fr'/old_data\{game_version}.voting_data.txt', 'r') as file):
     total_votes = {}
     total_vote_count = 0
     rounds = 0
