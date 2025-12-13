@@ -85,6 +85,7 @@ with open(f'../new_data/{file_name}.txt', 'r') as f:
         if 'meleeSucesses' in stats:
             melee_hits += stats['meleeSucesses']
             melee_attempts += stats['meleeAttempts']
+        return
 
 
 # calculating information from old_data

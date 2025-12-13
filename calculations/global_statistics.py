@@ -31,9 +31,9 @@ def parse_message(content):
         statistics[f"{j[0]}"] = value
     return statistics
 all_stats = []
-game_version = "1.0"
+game_version = "7d"
 games_played = 0
-with open(f'../old_data/{game_version}.statistics.txt', 'r') as f:
+with open(f'../new_data/{game_version}.player-statistics-data.txt', 'r') as f:
     #initalizing variables
     health_healed = 0
     wins = 0

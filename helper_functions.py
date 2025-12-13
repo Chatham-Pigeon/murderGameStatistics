@@ -52,3 +52,18 @@ def parsetime(time: str):
             seconds_time = seconds_time + (length * config.times[char])
         idx = idx + 1
     return seconds_time
+
+def calculate_percentages(items, should_round: bool = False):
+    new_percentages = {}
+    total = sum(value for value in items.values())
+    for key, value in items.items():
+        new_percentages[key] = (value / total) * 100
+        if should_round is True:
+            new_percentages[key] = round(new_percentages[key], 2)
+    return new_percentages
+def sort(items):
+    return dict(sorted(items.items(), key=lambda x: x[1], reverse=True))
+def sort_dict_by_key(meow):
+    return dict(sorted(meow.items(), reverse=True))
+def sort_dict_by_nested_value(items, key, reverse=True):
+    return dict(sorted(items.items(), key=lambda x: x[1].get(key, 0), reverse=reverse))

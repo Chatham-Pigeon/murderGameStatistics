@@ -1,6 +1,4 @@
 import asyncio
-from encodings.aliases import aliases
-
 from discord.ext import commands
 
 import config
@@ -13,6 +11,7 @@ intents.message_content = True
 intents.messages = True
 intents.members = True
 bot = commands.Bot(command_prefix='!', intents=intents, help_command=None)
+
 
 @bot.event
 async def on_ready():
@@ -30,7 +29,7 @@ async def dated_backlog(ctx: discord.ext.commands.Context, time_length: str, cha
         with open(f'new_data/{time_length}.{channel.name}.txt', 'a') as file:
             file.write(f"{message.content}\n")
         print(f"{total_added} ADDED: {message.content}")
-    await ctx.reply(f"Done! found {total_added} data points inside of <#{channel.id}>")
+    await ctx.reply(f"Done! found {total_added} data points inside of <#{channel.id}>", file=discord.File(f'new_data/{time_length}.{channel.name}.txt'))
 
 @bot.command(aliases=['catchup'])
 async def catch_up(ctx: discord.ext.commands.Context, channel_id: int = None):
@@ -46,6 +45,8 @@ async def catch_up(ctx: discord.ext.commands.Context, channel_id: int = None):
         async for message in channel.history(limit=None):
             if message.id == this_last_seen:
                 break
+            if not message.content.startswith("("):
+                break
             if total_added == 0:
                 new_last_seen = message.id
             total_added += 1
@@ -55,8 +56,19 @@ async def catch_up(ctx: discord.ext.commands.Context, channel_id: int = None):
         # done!
         await ctx.reply(f"saved {total_added} data points from <#{channel.id}>")
         set_last_message(channel.id, new_last_seen)
-
-
+@bot.command(aliases=[''])
+async def die(ctx: discord.ext.commands.Context):
+    total_added = 0
+    channel: discord.TextChannel = ctx.guild.get_channel(1376020164780363846)
+    await ctx.reply(f"saving data points in <#{channel.id}>")
+    async for message in channel.history(limit=None, oldest_first=True):
+        if message.content.startswith("("):
+            break
+        total_added += 1
+        with open(fr'C:\Users\jacta\PycharmProjects\PythonProject1\new_data\allTime.purchase-data.txt', 'a') as file:
+            file.write(f'{int(message.created_at.timestamp())}#{message.content}\n')
+        print(f"{total_added} ADDED: {message.content}")
+    await ctx.reply(f"Done! found {total_added} data points inside of <#{channel.id}>")
 initial_extensions = ['cogs.purchase_data_cog', 'cogs.map_data_cog', 'cogs.player_statistics_cog', 'cogs.map_voting_cog', 'cogs.player_data_cog', 'cogs.evil_data', 'cogs.kill_data_cog']
 async def main():
     for extension in initial_extensions:

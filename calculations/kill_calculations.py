@@ -25,7 +25,7 @@ class killLog:
         self.killer_health = killer_health
         self.game_length_at_death = game_length_at_death
 def parse_kill_message(message: str):
-    message = message.split(" ")
+    message = message.split("#")[1].split(" ")
     message.pop(0)
     message.pop(0)
     message.pop(0)
@@ -36,7 +36,13 @@ def parse_kill_message(message: str):
 game_version = "1.0"
 traitor_team = ['traitor', 'accomplice']
 citizen_team = ['detective', 'innocent', 'doctor']
-with open(f'../data/{game_version}.kills.txt', 'r') as file:
+first_dead = {}
+player_deaths = {}
+backstab_victims = {}
+backstab_killers = {}
+backstab_count = 0
+death_causes_against_traitor_by_det = {}
+with open(f'../new_data/allTime.kills-data.txt', 'r') as file:
     recorded_games = []
     arrows_left_over = 0
     deaths = 0
@@ -52,6 +58,12 @@ with open(f'../data/{game_version}.kills.txt', 'r') as file:
         kill, game_id = parse_kill_message(line)
         if not game_id in recorded_games:
             recorded_games.append(game_id)
+            if kill.victim not in first_dead:
+                first_dead[kill.victim] = 0
+            first_dead[kill.victim] += 1
+        if kill.victim not in player_deaths:
+            player_deaths[kill.victim] = 0
+        player_deaths[kill.victim] += 1
         arrows_left_over += int(kill.victim_arrow_count)
         if int(kill.victim_arrow_count) not in arrow_count_left_over_count:
             arrow_count_left_over_count[int(kill.victim_arrow_count)] = 0
@@ -76,7 +88,41 @@ with open(f'../data/{game_version}.kills.txt', 'r') as file:
                 team_killers[kill.killer] += 1
         if kill.death_cause == "projectile" and not kill.killer_hand_item == "bow":
             those_kinda_kills += 1
+        if kill.killer_role == 'fiend' and kill.victim_role == 'fiend':
+            print(f"{kill.killer} KILLS {kill.victim} {kill.killer_hand_item} {kill.killer_health}")
+        if kill.killer_role == 'traitor':
+            if kill.killer_hand_item == 'iron_sword':
+                if kill.death_cause == 'entity_attack':
+                    backstab_count += 1
+                    if kill.killer not in backstab_killers:
+                        backstab_killers[kill.killer] = 0
+                    backstab_killers[kill.killer] += 1
+                    if kill.victim not in backstab_victims:
+                        backstab_victims[kill.victim] = 0
+                    backstab_victims[kill.victim] += 1
+        if kill.killer_role == "detective" and kill.victim_role == "traitor":
+            if kill.death_cause not in death_causes_against_traitor_by_det:
+                death_causes_against_traitor_by_det[kill.death_cause] = 0
+            death_causes_against_traitor_by_det[kill.death_cause] += 1
 
 print(f"avg arrows leftover per death {arrows_left_over / deaths}")
 print(f" raw arrow leftover{arrows_left_over}")
 print(f"arrows leftover dict {sort(arrow_count_left_over_count)}")
+print(f"first dead {sort(first_dead)}")
+print(f"most dead {sort(player_deaths)}")
+first_dead_percent = {}
+idx = 0
+for player, first_deaths in sort(first_dead).items():
+        first_dead_percent[player] = first_deaths / player_deaths[player] * 100
+idx = 0
+for player, first_deaths_percent in sort(first_dead_percent).items():
+    if player_deaths[player] >= 50:
+        idx += 1
+        print(f"{idx}. {player}: {first_deaths_percent}")
+p = 'temptest1'
+print(f"deaths of that person {player_deaths[p]} {first_dead_percent[p]}")
+print(f"raw backstab {backstab_count} % of all deaths {backstab_count / deaths * 100}")
+print(f"death causes {sort(death_causes)}")
+print(f"backstab_killers: {sort(backstab_killers)}")
+print(f"backstab_victims: {sort(backstab_victims)}")
+print(calculate_percentages(death_causes_against_traitor_by_det))

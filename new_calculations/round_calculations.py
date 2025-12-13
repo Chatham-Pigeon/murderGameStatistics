@@ -1,25 +1,38 @@
 import datetime
+from helper_functions import sort, sort_dict_by_nested_value, sort_dict_by_key, calculate_percentages
+
+class roundData:
+    # game_round, map_name, win_team, fiend_win, game_length, player_count, fiend_count
+    # (1.0) **2025/11/3 01:07AM** 54653: The Trials:Citizens:false:854:4:0
+    def __init__(self, input_string: str):
+        if "#" in input_string:
+            timestamp = input_string.split("#", 1)[0]
+            input_string = input_string.split("#", 1)[1]
+        else:
+            timestamp = None
+        data = input_string.split(":")
+        data.pop(0)
+        self.game_round = data.pop(0).split(" ")[1].removesuffix(":")
+        self.map_name = data.pop(0).strip()
+        self.win_team = data.pop(0)
+        self.fiend_win = data.pop(0)
+        self.game_length = data.pop(0)
+        self.player_count = data.pop(0)
+        self.fiend_count = data.pop(0).strip()
+        self.timestamp = int(timestamp)
+        if self.win_team == 'Traitors':
+            self.win_team = 'traitor'
+        if self.win_team == 'Citizens':
+            self.win_team = "innocents"
+        if self.map_name == "Forst_Mansion":
+            self.map_name = "Forest_Mansion"
 
 
-def calculate_percentages(items, should_round: bool = False):
-    new_percentages = {}
-    total = sum(value for value in items.values())
-    for key, value in items.items():
-        new_percentages[key] = (value / total) * 100
-        if should_round is True:
-            new_percentages[key] = round(new_percentages[key], 2)
-    return new_percentages
-def sort(items):
-    return dict(sorted(items.items(), key=lambda x: x[1], reverse=True))
 
-def sort_dict_by_key(meow):
-    return dict(sorted(meow.items(), reverse=True))
-
-
-def sort_dict_by_nested_value(items, key, reverse=True):
-    return dict(sorted(items.items(), key=lambda x: x[1].get(key, 0), reverse=reverse))
-
-with (open(fr'C:\Users\jacta\PycharmProjects\PythonProject1\new_data\30d.round-data.txt', 'r') as file):
+time_length = "allTime"
+before_time = 1757415600
+after_time = 1757415600 - 2592000
+with (open(fr'C:\Users\jacta\PycharmProjects\PythonProject1\new_data\{time_length}.round-data.txt', 'r') as file):
     fiend_role_wins = {"traitor": 0, "innocents": 0}
     win_dict = {"traitor": 0, "innocents": 0, "fiend": 0}
     map_count = {}
@@ -49,25 +62,25 @@ with (open(fr'C:\Users\jacta\PycharmProjects\PythonProject1\new_data\30d.round-d
     shortest_length_where = {}
     for i in file:
         count += 1
-        game_round, map_name, win_team, fiend_win, game_length, player_count, fiend_count = i.split(" ")
-        if win_team == 'Traitors':
-            win_team = 'traitor'
-        if win_team == 'Citizens':
-            win_team = "innocents"
-        if map_name == "Forst_Mansion":
-            map_name = "Forest_Mansion"
-        if int(player_count) not in shortest_length:
-            shortest_length[int(player_count)] = int(game_length)
-            shortest_length_where[int(player_count)] = game_round
-        if shortest_length[int(player_count)] > int(game_length):
-            shortest_length[int(player_count)] = int(game_length)
-            shortest_length_where[int(player_count)] = game_round
+        round_info: roundData = roundData(i)
+        if round_info.timestamp < after_time:
+            continue
+        if round_info.timestamp > before_time:
+            continue
+        if int(round_info.player_count) < 7:
+            continue
+        if int(round_info.player_count) not in shortest_length:
+            shortest_length[int(round_info.player_count)] = int(round_info.game_length)
+            shortest_length_where[int(round_info.player_count)] = round_info.game_round
+        if shortest_length[int(round_info.player_count)] > int(round_info.game_length):
+            shortest_length[int(round_info.player_count)] = int(round_info.game_length)
+            shortest_length_where[int(round_info.player_count)] = round_info.game_round
 
-        streak_win_team = win_team
-        if fiend_win == 'true':
+        streak_win_team = round_info.win_team
+        if round_info.fiend_win == 'true':
             streak_win_team = 'fiend'
         if streak_win_team == last_win_team:
-            if int(player_count) >= 7:
+            if int(round_info.player_count) >= 7:
                 if streak_win_team == "traitor":
                     traitor_streak += 1
                 if streak_win_team == "innocents":
@@ -77,98 +90,97 @@ with (open(fr'C:\Users\jacta\PycharmProjects\PythonProject1\new_data\30d.round-d
             else:
                 if traitor_streak >= high_traitor_streak:
                     high_traitor_streak = traitor_streak + 1
-                    trait_where = game_round
+                    trait_where = round_info.game_round
                 if innocent_streak >= high_inno_streak:
                     high_inno_streak = innocent_streak + 1
-                    inno_where = game_round
+                    inno_where = round_info.game_round
                 if fiend_streak >= high_fiend_streak:
                     high_fiend_streak = fiend_streak + 1
-                    fiend_where = game_round
+                    fiend_where = round_info.game_round
                 traitor_streak = 0
                 innocent_streak = 0
                 fiend_streak = 0
         else:
             if traitor_streak >= high_traitor_streak:
                 high_traitor_streak = traitor_streak + 1
-                trait_where = game_round
+                trait_where = round_info.game_round
             if innocent_streak >= high_inno_streak:
                 high_inno_streak = innocent_streak + 1
-                inno_where = game_round
+                inno_where = round_info.game_round
             if fiend_streak >= high_fiend_streak:
                 high_fiend_streak = fiend_streak + 1
-                fiend_where = game_round
+                fiend_where = round_info.game_round
             traitor_streak = 0
             innocent_streak = 0
             fiend_streak = 0
 
         last_win_team = streak_win_team
-        inted_player_count = int(player_count)
+        inted_player_count = int(round_info.player_count)
         if inted_player_count not in game_length_per_count:
-            game_length_per_count[int(player_count)] = [int(game_length)]
+            game_length_per_count[int(round_info.player_count)] = [int(round_info.game_length)]
         else:
-            game_length_per_count[int(player_count)].append(int(game_length))
+            game_length_per_count[int(round_info.player_count)].append(int(round_info.game_length))
 
         if inted_player_count not in player_count_count:
-            player_count_count[int(player_count)] = 1
+            player_count_count[int(round_info.player_count)] = 1
         else:
-            player_count_count[int(player_count)] = player_count_count[int(player_count)] + 1
+            player_count_count[int(round_info.player_count)] = player_count_count[int(round_info.player_count)] + 1
 
         if inted_player_count not in most_played_map_per_player_count:
-            most_played_map_per_player_count[inted_player_count] = {f"{map_name}": 1}
+            most_played_map_per_player_count[inted_player_count] = {f"{round_info.map_name}": 1}
         else:
-            if map_name not in most_played_map_per_player_count[inted_player_count]:
-                most_played_map_per_player_count[inted_player_count][map_name] = 1
+            if round_info.map_name not in most_played_map_per_player_count[inted_player_count]:
+                most_played_map_per_player_count[inted_player_count][round_info.map_name] = 1
             else:
-                most_played_map_per_player_count[inted_player_count][map_name] += 1
+                most_played_map_per_player_count[inted_player_count][round_info.map_name] += 1
 
         if inted_player_count not in win_team_per_player_count.keys():
             win_team_per_player_count[inted_player_count] = {"traitor": 0, "innocents": 0, "fiend": 0}
-            if fiend_win == 'true':
+            if round_info.fiend_win == 'true':
                 win_team_per_player_count[inted_player_count]['fiend'] = 1
             else:
-                win_team_per_player_count[inted_player_count][win_team] = 1
+                win_team_per_player_count[inted_player_count][round_info.win_team] = 1
         else:
-            if fiend_win == 'true':
+            if round_info.fiend_win == 'true':
                 win_team_per_player_count[inted_player_count]['fiend'] = win_team_per_player_count[inted_player_count]['fiend'] + 1
             else:
-                win_team_per_player_count[inted_player_count][win_team] = win_team_per_player_count[inted_player_count][win_team] + 1
-        if int(player_count) < 7:
-            continue
-        avg_game_length = avg_game_length + int(game_length)
+                win_team_per_player_count[inted_player_count][round_info.win_team] = win_team_per_player_count[inted_player_count][round_info.win_team] + 1
+
+        avg_game_length = avg_game_length + int(round_info.game_length)
         total_rounds = total_rounds + 1
-        if fiend_win == 'true':
+        if round_info.fiend_win == 'true':
             if 'fiend' not in avg_team_win_length:
-                avg_team_win_length['fiend'] = int(game_length)
+                avg_team_win_length['fiend'] = int(round_info.game_length)
             else:
-                avg_team_win_length['fiend'] = avg_team_win_length['fiend'] + int(game_length)
+                avg_team_win_length['fiend'] = avg_team_win_length['fiend'] + int(round_info.game_length)
         else:
-            if win_team not in avg_team_win_length:
-                avg_team_win_length[win_team] = int(game_length)
+            if round_info.win_team not in avg_team_win_length:
+                avg_team_win_length[round_info.win_team] = int(round_info.game_length)
             else:
-                avg_team_win_length[win_team] = avg_team_win_length[win_team] + int(game_length)
-        if fiend_win == 'false':
-            win_dict[win_team] = win_dict[win_team] + 1
+                avg_team_win_length[round_info.win_team] = avg_team_win_length[round_info.win_team] + int(round_info.game_length)
+        if round_info.fiend_win == 'false':
+            win_dict[round_info.win_team] = win_dict[round_info.win_team] + 1
         else:
-            fiend_role_wins[win_team] = fiend_role_wins[win_team] + 1
+            fiend_role_wins[round_info.win_team] = fiend_role_wins[round_info.win_team] + 1
             win_dict['fiend'] = win_dict['fiend'] + 1
 
-        if map_name not in map_count.keys():
-            map_count[map_name] = 1
-            map_role_wins[map_name] = {"traitor": 0, "innocents": 0, "fiend": 0}
-            if fiend_win == 'true':
-                map_role_wins[map_name]['fiend'] = 1
+        if round_info.map_name not in map_count.keys():
+            map_count[round_info.map_name] = 1
+            map_role_wins[round_info.map_name] = {"traitor": 0, "innocents": 0, "fiend": 0}
+            if round_info.fiend_win == 'true':
+                map_role_wins[round_info.map_name]['fiend'] = 1
             else:
-                map_role_wins[map_name][win_team] = 1
+                map_role_wins[round_info.map_name][round_info.win_team] = 1
         else:
-            map_count[map_name] = map_count[map_name] + 1
-            if fiend_win == 'true':
-                map_role_wins[map_name]['fiend'] = map_role_wins[map_name]['fiend'] + 1
+            map_count[round_info.map_name] = map_count[round_info.map_name] + 1
+            if round_info.fiend_win == 'true':
+                map_role_wins[round_info.map_name]['fiend'] = map_role_wins[round_info.map_name]['fiend'] + 1
             else:
-                map_role_wins[map_name][win_team] = map_role_wins[map_name][win_team] + 1
-        if map_name not in map_avg_length:
-            map_avg_length[map_name] = int(game_length)
+                map_role_wins[round_info.map_name][round_info.win_team] = map_role_wins[round_info.map_name][round_info.win_team] + 1
+        if round_info.map_name not in map_avg_length:
+            map_avg_length[round_info.map_name] = int(round_info.game_length)
         else:
-            map_avg_length[map_name] = map_avg_length[map_name] + int(game_length)
+            map_avg_length[round_info.map_name] = map_avg_length[round_info.map_name] + int(round_info.game_length)
 
 
 

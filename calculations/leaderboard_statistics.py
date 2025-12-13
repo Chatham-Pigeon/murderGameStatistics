@@ -34,7 +34,8 @@ def parse_message(content):
 
 game_version = "1.0"
 total_games_played = 0
-with open(f'../old_data/{game_version}.statistics.txt', 'r') as f:
+file_name = r"C:\Users\jacta\PycharmProjects\PythonProject1\new_data\30d.player-statistics-data.txt"
+with open(file_name, 'r') as f:
     #initalizing variables
     health_healed = {}
     games_played = {}

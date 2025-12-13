@@ -7,6 +7,8 @@ def calculate_percentages(items):
 def sort(items):
     return dict(sorted(items.items(), key=lambda x: x[1], reverse=True))
 def parse_message(parsed_message: str):
+    timestamp = parsed_message.split("#",1)[0]
+    parsed_message = parsed_message.split("#", 1)[1]
     parse_alive = True
     if " (dead)" in parsed_message:
         parsed_message = parsed_message.replace(" (dead)", "")
@@ -25,7 +27,7 @@ yappers = {}
 last_message = ""
 last_name = ""
 spam_count = 0
-with (open(fr'C:\Users\jacta\PycharmProjects\PythonProject1\data\{game_version}.evil_data.txt', 'r', encoding='utf-8', errors='replace') as file):
+with (open(fr'C:\Users\jacta\PycharmProjects\PythonProject1\new_data\allTime.chat-data.txt', 'r', encoding='utf-8', errors='replace') as file):
     for i in file:
         data_version, name, message, dead = parse_message(i)
         if name not in yappers:
@@ -45,5 +47,4 @@ with (open(fr'C:\Users\jacta\PycharmProjects\PythonProject1\data\{game_version}.
             spam_count = 0
         last_message = message
         last_name = name
-#print(sort(yappers))
-#print(sort(common_words))
+print(sort(yappers))
