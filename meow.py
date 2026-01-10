@@ -1,10 +1,13 @@
 import asyncio
+import os
+
 from discord.ext import commands
+from discord.ext.commands import Context
 
 import config
 from SECRETS import DISCORD_TOKEN
 import discord
-from helper_functions import parsetime, get_last_message, set_last_message
+from helper_functions import parsetime
 from datetime import datetime
 intents = discord.Intents.default()
 intents.message_content = True
@@ -22,63 +25,32 @@ async def dated_backlog(ctx: discord.ext.commands.Context, time_length: str, cha
     total_added = 0
     channel: discord.TextChannel = ctx.guild.get_channel(channel_id)
     await ctx.reply(f"saving data points in <#{channel.id}> from <t:{int(end_time_seconds)}:R>")
+    file_path = f'new_data/{time_length}.{channel.name}.txt'
+    try:
+        os.remove(file_path)
+    except FileNotFoundError as e:
+        print(f"File not found, ignoring! :: {e}, ")
     async for message in channel.history(limit=None):
         if message.created_at.timestamp() < end_time_seconds:
             break
         total_added += 1
-        with open(f'new_data/{time_length}.{channel.name}.txt', 'a') as file:
+        with open(file_path, 'a') as file:
             file.write(f"{message.content}\n")
         print(f"{total_added} ADDED: {message.content}")
-    await ctx.reply(f"Done! found {total_added} data points inside of <#{channel.id}>", file=discord.File(f'new_data/{time_length}.{channel.name}.txt'))
+    if channel_id in [config.PLAYER_SAVE_CHANNEL]:
+        await ctx.reply(f"Done! found {total_added} data points inside of {channel.name} (hidden because im evil pranked)",)
+        return
+    await ctx.reply(f"Done! found {total_added} data points inside of <#{channel.id}>", file=discord.File(file_path))
 
-@bot.command(aliases=['catchup'])
-async def catch_up(ctx: discord.ext.commands.Context, channel_id: int = None):
-    if channel_id is None:
-        data_category: discord.CategoryChannel = discord.utils.get(ctx.guild.categories, id=config.DATA_CATEGORY_ID)
-        channels_list = data_category.channels
+@bot.event
+async def on_command_error(ctx: Context, error: Exception) -> None:
+    if isinstance(error, discord.ext.commands.CheckFailure):
+        await ctx.message.add_reaction("❌")
+    elif isinstance(error, discord.ext.commands.errors.CommandNotFound):
+        await ctx.message.add_reaction("❔")
     else:
-        channels_list = [ctx.guild.get_channel(channel_id)]
-    for channel in channels_list:
-        total_added = 0
-        this_last_seen = get_last_message(channel.id)
-        await ctx.reply(f"Saving ALL data points for <#{channel.id}>")
-        async for message in channel.history(limit=None):
-            if message.id == this_last_seen:
-                break
-            if not message.content.startswith("("):
-                break
-            if total_added == 0:
-                new_last_seen = message.id
-            total_added += 1
-            with open(f'new_data/allTime.{channel.name}.txt', 'a', encoding='utf-8', errors='replace') as file:
-                file.write(f'{int(message.created_at.timestamp())}#{message.content}\n')
-            print(f"{total_added} ADDED: {message.content}")
-        # done!
-        await ctx.reply(f"saved {total_added} data points from <#{channel.id}>")
-        set_last_message(channel.id, new_last_seen)
-@bot.command(aliases=[''])
-async def die(ctx: discord.ext.commands.Context):
-    total_added = 0
-    channel: discord.TextChannel = ctx.guild.get_channel(1376020164780363846)
-    await ctx.reply(f"saving data points in <#{channel.id}>")
-    async for message in channel.history(limit=None, oldest_first=True):
-        if message.content.startswith("("):
-            break
-        total_added += 1
-        with open(fr'C:\Users\jacta\PycharmProjects\PythonProject1\new_data\allTime.purchase-data.txt', 'a') as file:
-            file.write(f'{int(message.created_at.timestamp())}#{message.content}\n')
-        print(f"{total_added} ADDED: {message.content}")
-    await ctx.reply(f"Done! found {total_added} data points inside of <#{channel.id}>")
-initial_extensions = ['cogs.purchase_data_cog', 'cogs.map_data_cog', 'cogs.player_statistics_cog', 'cogs.map_voting_cog', 'cogs.player_data_cog', 'cogs.evil_data', 'cogs.kill_data_cog']
-async def main():
-    for extension in initial_extensions:
-        try:
-            await bot.load_extension(extension)
-            print(f"{extension} loaded successfully.")
-        except Exception as e:
-            print(f"Failed to load extension {extension}: {e}")
+        await ctx.reply(f"Error occurred! {error}")
 
-asyncio.run(main())
 bot.run(DISCORD_TOKEN)
 
 

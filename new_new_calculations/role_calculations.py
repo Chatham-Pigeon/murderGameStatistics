@@ -1,7 +1,6 @@
 from math import floor
 from math import ceil
-def sort(items):
-    return dict(sorted(items.items(), key=lambda x: x[1], reverse=True))
+from helper_functions import sort
 def role_data(player_count):
     role_dictionary = {'traitor': max(1, floor(player_count / 4.5)), 'detective': max(1, floor(player_count / 8))}
     if player_count >= 6:
@@ -18,5 +17,3 @@ def role_data(player_count):
 
 for i in range(3, 31):
     print(f"{i}.{sort(role_data(i))}")
-
-# innocent traitor doctor fiend detective accomplice
