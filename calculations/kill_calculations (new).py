@@ -17,7 +17,7 @@ class log:
                 setattr(self, key, f"{value}")
 log_name = "kill"
 time = "7d"
-with open(fr'../new_data/{time}.{log_name}-data.txt', 'r') as file:
+with open(fr'../data/{time}.{log_name}-data.txt', 'r') as file:
     killer_dict = {}
     for line in file:
         kill = log(line)

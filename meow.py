@@ -25,7 +25,7 @@ async def dated_backlog(ctx: discord.ext.commands.Context, time_length: str, cha
     total_added = 0
     channel: discord.TextChannel = ctx.guild.get_channel(channel_id)
     await ctx.reply(f"saving data points in <#{channel.id}> from <t:{int(end_time_seconds)}:R>")
-    file_path = f'new_data/{time_length}.{channel.name}.txt'
+    file_path = f'data/{time_length}.{channel.name}.txt'
     try:
         os.remove(file_path)
     except FileNotFoundError as e:

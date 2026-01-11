@@ -18,7 +18,7 @@ class log:
 
 log_name = "round"
 time = "30d"
-with open(fr'../new_data/{time}.{log_name}-data.txt', 'r') as file:
+with open(fr'../data/{time}.{log_name}-data.txt', 'r') as file:
     role_wins_proper = {"Traitors": 0, "Citizens": 0, "Fiends": 0}
     role_wins = {"Traitors": 0, "Citizens": 0}
     map_wins = {}
