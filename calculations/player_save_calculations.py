@@ -18,10 +18,10 @@ class log:
 log_name = "player-save"
 time = "30d"
 roles = ['innocent', 'detective', 'doctor', 'traitor', 'accomplice', 'fiend']
+max_lb_display = 25
 with open(fr'../data/{time}.{log_name}-data.txt', 'r') as file:
     wins = {}
     role_wins = {}
-    players = []
     for line in file:
         save = log(line)
         wins_innocent = 0
@@ -38,18 +38,11 @@ with open(fr'../data/{time}.{log_name}-data.txt', 'r') as file:
         if save.wins is None:
             save.wins = 0
         wins[save.name] = save.wins
-        if not save.name in players:
-            players.append(save.name)
+print("Overall wins")
 wins = sort(wins)
 idx = 0
 for name, wins in wins.items():
     idx += 1
     print(f"{idx}. {name}: {wins}")
-    if idx >= 100:
+    if idx >= max_lb_display:
         break
-print(len(players))
-
-
-
-
-

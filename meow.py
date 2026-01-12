@@ -34,7 +34,7 @@ async def dated_backlog(ctx: discord.ext.commands.Context, time_length: str, cha
         if message.created_at.timestamp() < end_time_seconds:
             break
         total_added += 1
-        with open(file_path, 'a') as file:
+        with open(file_path, 'a', encoding='utf-8', errors='replace') as file:
             file.write(f"{message.content}\n")
         print(f"{total_added} ADDED: {message.content}")
     if channel_id in [config.PLAYER_SAVE_CHANNEL]:
