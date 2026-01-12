@@ -76,11 +76,17 @@ with open(fr'../data/{time}.{log_name}-data.txt', 'r') as file:
         # ensuring valid feedback
         if not valid_feedback(feedback):
             continue
+        # if player did not rate all 3 choices, don't use feedback
+        if feedback.visuals == 0 or feedback.gameplay == 0 or feedback.overall == 0:
+            continue
+        # if player built the map, do not use feedback
         if feedback.name in builders[feedback.map]:
             continue
+        # ignore feedback from players who already rated (users most recent rating will be used)
         if feedback.name in raters[feedback.map]:
             continue
-        # valid feedback code
+
+        # feedback is valid, continue with code
         raters[feedback.map].append(feedback.name)
         for rating in ratings:
             map_feedback[feedback.map][rating].append(getattr(feedback, rating))
