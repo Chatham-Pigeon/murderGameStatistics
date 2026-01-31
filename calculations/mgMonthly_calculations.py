@@ -27,6 +27,8 @@ with open(fr'../data/{time}.{log_name}-data.txt', 'r') as file:
     role_wins_game_length_per_map = {"Highrise": {"Traitors": [], "Citizens": [], "Fiends": []}}
     for line in file:
         data = log(line)
+        if int(data.playercount) < 7:
+            continue
         role_wins[data.winner] += 1
         if not data.map in role_wins_game_length_per_map:
             role_wins_game_length_per_map[data.map] = {"Traitors": [], "Citizens": [], "Fiends": []}
@@ -70,7 +72,7 @@ for map_name, distance in euclidian_distance.items():
     idx += 1
     print(f"{idx}. {map_name}: {distance} ({formatted_win_rates(map_wins[map_name])})")
     if idx >= 10:
-        break
+        continue
 print("")
 for role in target_role_win_percents.keys():
     print(f"Best Maps for {role}:")
