@@ -30,7 +30,7 @@ builders = {
     "Overgrown City": ["Och0"],
     "The Aquarium": ["Chatham_Pigeon"],
     "Walmar Street": ["Powercyphe"],
-    "IKEA™": ["InfinityWorks"],
+    "IKEAâ„¢": ["InfinityWorks"],
     "Behind The Waterfall": ["Powercyphe", "Legendarial"],
     "Office": ["The_Blue_Friend"],
     "Moon Base": ["Sagittarixie"],
@@ -61,7 +61,9 @@ builders = {
     "Barclays Bank": ["TeamF"],
     "The Last Duel": ["nvct"]
 }
+votes = {'2Fort': 5.39, 'Abandoned Factory': 19.15, 'Abandoned Prison': 9.1, 'Barclays Bank': 8.92, 'Behind The Waterfall': 20.7, 'Bowling Alley': 9.92, 'Bunker 83': 9.77, 'Cliffside Mansion': 4.39, 'Cosmic Encounter': 10.09, 'Electrical Station': 7.66, 'Emberwoods': 12.51, 'Fiend Casino': 11.45, 'Forest Mansion': 11.06, 'Glacial Grotto': 11.73, 'Haunted Hotel': 6.24, 'Highrise': 26.16, 'IKEAâ„¢': 16.28, 'Impoverished Domicile': 9.4, 'Japanese Estate': 32.23, 'Mediterranean': 6.61, 'Moon Base': 9.63, 'Northorn Mansion': 8.6, 'Office': 6.47, 'Oil Rig': 19.85, 'Old Bunker': 9.68, 'Overgrown City': 6.13, 'Overgrown Site': 5.5, 'Seaside': 11.21, 'Subway Station': 5.39, 'Temple of KING Sr.': 7.16, 'The Aquarium': 11.61, 'The Brigade': 16.93, 'The Commons': 8.62, 'The Depths': 9.92, 'The Last Duel': 16.82, 'The Mall': 10.43, 'The Mineshafts': 14.96, 'The Trials': 20.5, 'Tropics': 12.99, 'Walmar Street': 24.33}
 ratings = ['gameplay', 'visuals', 'overall']
+
 with open(fr'../data/{time}.{log_name}-data.txt', 'r') as file:
     raters = {}
     map_feedback = {}
@@ -104,15 +106,22 @@ for map_name, feedbackDict in map_feedback.items():
 
 
 # sort, calculate, display averages + other info map specfic
-sort_key = "overall"
-map_feedback_avgs = sort_dict_by_nested_value(map_feedback_avgs, sort_key)
-for map_name, feedbackDict in map_feedback_avgs.items():
-    print(f"{map_name}:")
-    for rating in ratings:
-        print(f"- {rating}: {round(feedbackDict[rating], 2)}")
-    print(f"- Total: {map_feedback[map_name]['total']}")
-    print(f"- Valid total: {len(map_feedback[map_name][rating])}")
-    print(f"- Valid percent: {round(len(map_feedback[map_name][rating]) / map_feedback[map_name]['total'] * 100, 2)}%")
+for rating in ratings:
+    print(f"\n**Top 3 maps for {rating.capitalize()}**")
+    idx = 0
+    sort_key = rating
+    map_feedback_avgs = sort_dict_by_nested_value(map_feedback_avgs, sort_key)
+    for map_name, feedbackDict in map_feedback_avgs.items():
+        idx += 1
+        print(f"{idx}. {map_name}:")
+        for rating in ratings:
+            print(f"- {rating}: {round(feedbackDict[rating], 2)}")
+        #print(f"- Total: {map_feedback[map_name]['total']}")
+        #print(f"- Valid total: {len(map_feedback[map_name][rating])}")
+        #print(f"- Valid percent: {round(len(map_feedback[map_name][rating]) / map_feedback[map_name]['total'] * 100, 2)}%")
+        print(f"- Percent of the time map is selected when available: {votes[map_name]}%")
+        if idx >= 3:
+            pass
 # overall avg + other ifo
 print("Overall: ")
 for rating in ratings:

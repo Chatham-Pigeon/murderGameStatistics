@@ -8,6 +8,7 @@ class log:
         self.map = None
         self.fiend = None
         self.winner = None
+        self.playercount = None
         raw_data = raw_data.removesuffix("\n").split(";")
         for i in raw_data:
             key, value = i.split(":")
