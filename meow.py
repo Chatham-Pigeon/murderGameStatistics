@@ -32,6 +32,8 @@ async def dated_backlog(ctx: discord.ext.commands.Context, time_length: str, cha
     async for message in channel.history(limit=None):
         if message.created_at.timestamp() < end_time_seconds:
             break
+        if message.content == "STOP":
+            break
         total_added += 1
         with open(file_path, 'a', encoding='utf-8', errors='replace') as file:
             file.write(f"{message.content}\n")
