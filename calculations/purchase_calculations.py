@@ -17,6 +17,7 @@ time = "30d"
 with open(fr'../data/{time}.{log_name}-data.txt', 'r') as file:
     counts = {}
     role_purchases = {}
+    buyers = {"speed_potion": {"Chatham_Pigeon": 1}}
     for line in file:
         save = log(line)
         save.purchases = save.purchases.replace("[", "").replace("]", "").split(", ")
@@ -26,16 +27,31 @@ with open(fr'../data/{time}.{log_name}-data.txt', 'r') as file:
         if not save.role in role_purchases:
             role_purchases[save.role] = {}
         for item in save.purchases:
-            if item == '':
-                continue
             if not item in role_purchases[save.role]:
                 role_purchases[save.role][item] = 0
             role_purchases[save.role][item] += 1
-        if not save.purchases[0] == '':
-            print(save.purchases)
+            if item not in buyers:
+                buyers[item] = {}
+            if not save.name in buyers[item]:
+                buyers[item][save.name] = 0
+            buyers[item][save.name] += 1
+
+
+
+print("Role purchase Percents")
 for role, purchases in role_purchases.items():
     print(f"{role}:")
     purchases = calculate_percentages(purchases, True)
     purchases = sort(purchases)
     for item, count in purchases.items():
         print(f"- {item}: {count}")
+
+print("top buyers of items")
+for item, buyer_list in buyers.items():
+    print(f"{item}:")
+    idx = 0
+    for name, count in sort(buyer_list).items():
+        idx += 1
+        print(f"- {name}: {count}")
+        if idx >= 10:
+            break
