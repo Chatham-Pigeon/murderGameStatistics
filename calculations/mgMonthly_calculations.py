@@ -72,7 +72,7 @@ for map_name, distance in euclidian_distance.items():
     idx += 1
     print(f"{idx}. {map_name}: {distance} ({formatted_win_rates(map_wins[map_name])})")
     if idx >= 10:
-        continue
+        pass
 print("")
 for role in target_role_win_percents.keys():
     print(f"Best Maps for {role}:")

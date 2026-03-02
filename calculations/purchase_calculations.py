@@ -46,12 +46,3 @@ for role, purchases in role_purchases.items():
     for item, count in purchases.items():
         print(f"- {item}: {count}")
 
-print("top buyers of items")
-for item, buyer_list in buyers.items():
-    print(f"{item}:")
-    idx = 0
-    for name, count in sort(buyer_list).items():
-        idx += 1
-        print(f"- {name}: {count}")
-        if idx >= 10:
-            break
