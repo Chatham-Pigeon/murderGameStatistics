@@ -115,13 +115,13 @@ for rating in ratings:
         idx += 1
         print(f"{idx}. {map_name}:")
         for rating in ratings:
-            print(f"- {rating}: {round(feedbackDict[rating], 2)}")
+            print(f"\- {rating}: {round(feedbackDict[rating], 2)}")
         #print(f"- Total: {map_feedback[map_name]['total']}")
         #print(f"- Valid total: {len(map_feedback[map_name][rating])}")
         #print(f"- Valid percent: {round(len(map_feedback[map_name][rating]) / map_feedback[map_name]['total'] * 100, 2)}%")
-        print(f"- Percent of the time map is selected when available: {votes[map_name]}%")
+        print(f"\- Percent of the time map is selected when available: {votes[map_name]}%")
         if idx >= 3:
-            pass
+            break
 # overall avg + other ifo
 print("Overall: ")
 for rating in ratings:
