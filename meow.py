@@ -17,8 +17,7 @@ bot = commands.Bot(command_prefix='!', intents=intents, help_command=None)
 
 @bot.event
 async def on_ready():
-    pass
-    # await bot.get_channel(config.TESTING_CHANNEL).send("bot ready!")
+    await bot.get_channel(config.TESTING_CHANNEL).send("bot ready!")
 
 @bot.command(aliases=['datedbacklog'])
 async def dated_backlog(ctx: discord.ext.commands.Context, time_length: str, channel_id: int):
