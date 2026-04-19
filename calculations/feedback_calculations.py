@@ -18,7 +18,7 @@ class log:
             else:
                 setattr(self, key, f"{value}")
 log_name = "feedback"
-time = "30d"
+time = "365d"
 builders = {
     "Old Bunker": ["Sagittarixie"],
     "Haunted Hotel": ["StardustGemini"],
@@ -61,7 +61,7 @@ builders = {
     "Barclays Bank": ["TeamF"],
     "The Last Duel": ["nvct"]
 }
-votes = {'2Fort': 5.39, 'Abandoned Factory': 19.15, 'Abandoned Prison': 9.1, 'Barclays Bank': 8.92, 'Behind The Waterfall': 20.7, 'Bowling Alley': 9.92, 'Bunker 83': 9.77, 'Cliffside Mansion': 4.39, 'Cosmic Encounter': 10.09, 'Electrical Station': 7.66, 'Emberwoods': 12.51, 'Fiend Casino': 11.45, 'Forest Mansion': 11.06, 'Glacial Grotto': 11.73, 'Haunted Hotel': 6.24, 'Highrise': 26.16, 'IKEAâ„¢': 16.28, 'Impoverished Domicile': 9.4, 'Japanese Estate': 32.23, 'Mediterranean': 6.61, 'Moon Base': 9.63, 'Northorn Mansion': 8.6, 'Office': 6.47, 'Oil Rig': 19.85, 'Old Bunker': 9.68, 'Overgrown City': 6.13, 'Overgrown Site': 5.5, 'Seaside': 11.21, 'Subway Station': 5.39, 'Temple of KING Sr.': 7.16, 'The Aquarium': 11.61, 'The Brigade': 16.93, 'The Commons': 8.62, 'The Depths': 9.92, 'The Last Duel': 16.82, 'The Mall': 10.43, 'The Mineshafts': 14.96, 'The Trials': 20.5, 'Tropics': 12.99, 'Walmar Street': 24.33}
+votes = {'2Fort': 5.21, 'Abandoned Factory': 21.51, 'Abandoned Prison': 7.25, 'Barclays Bank': 11.13, 'Behind The Waterfall': 21.3, 'Bowling Alley': 7.91, 'Bunker 83': 9.98, 'Cliffside Mansion': 5.5, 'Cosmic Encounter': 8.88, 'Electrical Station': 9.34, 'Emberwoods': 14.02, 'Fiend Casino': 9.49, 'Forest Mansion': 6.51, 'Glacial Grotto': 10.53, 'Haunted Hotel': 6.79, 'Highrise': 29.04, 'IKEAâ„¢': 12.36, 'Impoverished Domicile': 8.55, 'Japanese Estate': 33.59, 'Mediterranean': 8.35, 'Moon Base': 8.92, 'Northorn Mansion': 9.76, 'Office': 5.74, 'Oil Rig': 18.15, 'Old Bunker': 8.21, 'Overgrown City': 6.02, 'Overgrown Site': 7.21, 'Seaside': 13.07, 'Subway Station': 7.85, 'Temple of KING Sr.': 5.25, 'The Aquarium': 15.45, 'The Brigade': 17.86, 'The Commons': 10.19, 'The Depths': 10.39, 'The Last Duel': 12.75, 'The Mall': 12.04, 'The Mineshafts': 10.6, 'The Trials': 15.78, 'Tropics': 16.72, 'Walmar Street': 20.56}
 ratings = ['gameplay', 'visuals', 'overall']
 
 with open(fr'../data/{time}.{log_name}-data.txt', 'r') as file:
@@ -77,7 +77,7 @@ with open(fr'../data/{time}.{log_name}-data.txt', 'r') as file:
 
         # ensuring valid feedback
         if not valid_feedback(feedback):
-            continue
+            pass
         # if player did not rate all 3 choices, don't use feedback
         if feedback.visuals == 0 or feedback.gameplay == 0 or feedback.overall == 0:
             continue
@@ -116,12 +116,12 @@ for rating in ratings:
         print(f"{idx}. {map_name}:")
         for rating in ratings:
             print(f"\- {rating}: {round(feedbackDict[rating], 2)}")
-        #print(f"- Total: {map_feedback[map_name]['total']}")
-        #print(f"- Valid total: {len(map_feedback[map_name][rating])}")
-        #print(f"- Valid percent: {round(len(map_feedback[map_name][rating]) / map_feedback[map_name]['total'] * 100, 2)}%")
+        print(f"- Total: {map_feedback[map_name]['total']}")
+        print(f"- Valid total: {len(map_feedback[map_name][rating])}")
+        print(f"- Valid percent: {round(len(map_feedback[map_name][rating]) / map_feedback[map_name]['total'] * 100, 2)}%")
         print(f"\- Percent of the time map is selected when available: {votes[map_name]}%")
         if idx >= 3:
-            break
+            pass
 # overall avg + other ifo
 print("Overall: ")
 for rating in ratings:

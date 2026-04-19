@@ -66,5 +66,5 @@ for name, accuracy in bow_accuracy.items():
 idx = 0
 for name, rate in sort(percent_accuracy).items():
     idx += 1
-    # print(f"{idx}. {name}: {rate}")
+    print(f"{idx}. {name}: {rate}")
 

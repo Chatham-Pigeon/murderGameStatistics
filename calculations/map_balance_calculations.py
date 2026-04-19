@@ -18,15 +18,24 @@ class log:
                 setattr(self, key, f"{value}")
 
 log_name = "round"
-time = "30d"
+time = "3y"
 with open(fr'../data/{time}.{log_name}-data.txt', 'r') as file:
     role_wins_proper = {"Traitors": 0, "Citizens": 0, "Fiends": 0}
     role_wins = {"Traitors": 0, "Citizens": 0}
     map_wins = {}
     role_wins_game_length = {"Traitors": [], "Citizens": [], "Fiends": []}
     role_wins_game_length_per_map = {"Highrise": {"Traitors": [], "Citizens": [], "Fiends": []}}
+    amount_of_games = {}
     for line in file:
         data = log(line)
+        if data.winner == "traitor":
+            data.winner = "Traitors"
+        if data.winner == "innocents":
+            data.winner = "Citizens"
+        if data.map == "Forst Mansion":
+            data.map = "Forest Mansion"
+        if data.map == "Barcleys Bank":
+            data.map = "Barclays Bank"
         if int(data.playercount) < 7:
             continue
         role_wins[data.winner] += 1
@@ -47,6 +56,9 @@ with open(fr'../data/{time}.{log_name}-data.txt', 'r') as file:
             map_wins[data.map][data.winner] += 1
         else:
             map_wins[data.map]['Fiends'] += 1
+        if data.map not in amount_of_games:
+            amount_of_games[data.map] = 0
+        amount_of_games[data.map] += 1
 
 
 
@@ -70,16 +82,16 @@ euclidian_distance = sort(euclidian_distance, False)
 idx = 0
 for map_name, distance in euclidian_distance.items():
     idx += 1
-    print(f"{idx}. {map_name}: {distance} ({formatted_win_rates(map_wins[map_name])})")
+    print(f"{idx}. {map_name}: {distance} ({formatted_win_rates(map_wins[map_name])}) ({amount_of_games[map_name]} games)")
     if idx >= 10:
-        break
+        pass
 print("")
 for role in target_role_win_percents.keys():
     print(f"Best Maps for {role}:")
     idx = 0
     for map_name, wins in sort_dict_by_nested_value(map_wins, role).items():
         idx += 1
-        print(f"{idx}. {map_name}: {formatted_win_rates(wins)}")
+        print(f"{idx}. {map_name}: {formatted_win_rates(wins)} ({amount_of_games[map_name]} games)")
         if idx >= 3:
             break
     print("")
@@ -91,6 +103,8 @@ for name, length in role_wins_game_length_avg.items():
     minutes, seconds = divmod(length / 20, 60)
     role_wins_game_length_avg_formatted[name] = f"{int(minutes)}m{int(round(seconds, 0))}s"
 print(f"Average game length when role win: {", ".join(f"{role}: {time}" for role, time in role_wins_game_length_avg_formatted.items())}")
+print(f"map sum {sum(amount_of_games.values())}")
+exit()
 for map_name, role_lengths in role_wins_game_length_per_map.items():
     for role in target_role_win_percents.keys():
         role_wins_game_length_per_map[map_name][role] = sum(role_lengths[role]) / len(role_lengths[role])
