@@ -50,8 +50,8 @@ def calculate_percentages(items, should_round: bool = False):
     return new_percentages
 def sort(items, reverse = True):
     return dict(sorted(items.items(), key=lambda x: x[1], reverse=reverse))
-def sort_dict_by_key(meow):
-    return dict(sorted(meow.items(), reverse=True))
+def sort_dict_by_key(meow, reverse = True):
+    return dict(sorted(meow.items(), reverse=reverse))
 def sort_dict_by_nested_value(items, key, reverse=True):
     return dict(sorted(items.items(), key=lambda x: x[1].get(key, 0), reverse=reverse))
 def formatted_win_rates(items):
