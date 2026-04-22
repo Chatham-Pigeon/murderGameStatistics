@@ -17,8 +17,11 @@ class log:
                 setattr(self, key, int(value))
             else:
                 setattr(self, key, f"{value}")
+        if "IKEA" in self.map:
+            self.map = "IKEA"
+
 log_name = "feedback"
-time = "365d"
+time = "19d"
 builders = {
     "Old Bunker": ["Sagittarixie"],
     "Haunted Hotel": ["StardustGemini"],
@@ -30,7 +33,7 @@ builders = {
     "Overgrown City": ["Och0"],
     "The Aquarium": ["Chatham_Pigeon"],
     "Walmar Street": ["Powercyphe"],
-    "IKEAâ„¢": ["InfinityWorks"],
+    "IKEA": ["InfinityWorks"],
     "Behind The Waterfall": ["Powercyphe", "Legendarial"],
     "Office": ["The_Blue_Friend"],
     "Moon Base": ["Sagittarixie"],
@@ -59,11 +62,17 @@ builders = {
     "Northorn Mansion": ["Brxzillian"],
     "Abandoned Factory": ["Farbschaf"],
     "Barclays Bank": ["TeamF"],
-    "The Last Duel": ["nvct"]
+    "The Last Duel": ["nvct"],
+    "Sinister Sanctuary": ["Jeffree225", "nammannam"],
+    "Crimson Casino": ["Brxzillian"],
+    "Deep Dark Lab": ["___SillyGoose__"],
+    "Sculk Sanctum": ["RalseiDeltarune"],
+    "Nastrond": ["nvct"]
 }
-votes = {'2Fort': 5.21, 'Abandoned Factory': 21.51, 'Abandoned Prison': 7.25, 'Barclays Bank': 11.13, 'Behind The Waterfall': 21.3, 'Bowling Alley': 7.91, 'Bunker 83': 9.98, 'Cliffside Mansion': 5.5, 'Cosmic Encounter': 8.88, 'Electrical Station': 9.34, 'Emberwoods': 14.02, 'Fiend Casino': 9.49, 'Forest Mansion': 6.51, 'Glacial Grotto': 10.53, 'Haunted Hotel': 6.79, 'Highrise': 29.04, 'IKEAâ„¢': 12.36, 'Impoverished Domicile': 8.55, 'Japanese Estate': 33.59, 'Mediterranean': 8.35, 'Moon Base': 8.92, 'Northorn Mansion': 9.76, 'Office': 5.74, 'Oil Rig': 18.15, 'Old Bunker': 8.21, 'Overgrown City': 6.02, 'Overgrown Site': 7.21, 'Seaside': 13.07, 'Subway Station': 7.85, 'Temple of KING Sr.': 5.25, 'The Aquarium': 15.45, 'The Brigade': 17.86, 'The Commons': 10.19, 'The Depths': 10.39, 'The Last Duel': 12.75, 'The Mall': 12.04, 'The Mineshafts': 10.6, 'The Trials': 15.78, 'Tropics': 16.72, 'Walmar Street': 20.56}
-ratings = ['gameplay', 'visuals', 'overall']
+print(len(builders))
 
+ratings = ['gameplay', 'visuals', 'overall']
+new_maps = []
 with open(fr'../data/{time}.{log_name}-data.txt', 'r') as file:
     raters = {}
     map_feedback = {}
@@ -114,12 +123,12 @@ for rating in ratings:
     for map_name, feedbackDict in map_feedback_avgs.items():
         idx += 1
         print(f"{idx}. {map_name}:")
-        for rating in ratings:
-            print(f"\- {rating}: {round(feedbackDict[rating], 2)}")
+        for i_rating in ratings:
+            print(f"\- {i_rating}: {round(feedbackDict[i_rating], 2)}")
         print(f"- Total: {map_feedback[map_name]['total']}")
         print(f"- Valid total: {len(map_feedback[map_name][rating])}")
         print(f"- Valid percent: {round(len(map_feedback[map_name][rating]) / map_feedback[map_name]['total'] * 100, 2)}%")
-        print(f"\- Percent of the time map is selected when available: {votes[map_name]}%")
+        # print(f"\- Percent of the time map is selected when available: {votes[map_name]}%")
         if idx >= 3:
             pass
 # overall avg + other ifo

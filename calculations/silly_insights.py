@@ -1,4 +1,4 @@
-from helper_functions import sort, sort_dict_by_nested_value, sort_dict_by_key, calculate_percentages
+from helper_functions import sort, sort_dict_by_nested_value, sort_dict_by_key, calculate_percentages, join_with_final
 
 
 class log:
@@ -23,8 +23,8 @@ class log:
 
 
 log_name = "player-stats"
-time = "30d"
-moderators = ['JJJT', "Darqnt", "AutumnsBreeze", "Chatham_Pigeon", "nvct", "Ace127", "Jeffree225", "pixlii"]
+time = "48d"
+moderators = ['JJJT', "Darqnt", "AutumnsBreeze", "Chatham_Pigeon", "nvct", "Ace127", "Jeffree225", "pixlii", "KabanFriends"]
 with open(fr'../data/{time}.{log_name}-data.txt', 'r', encoding='utf-8') as f:
     round_with_moderators = {}
     moderators_played_rounds = {}
@@ -41,28 +41,66 @@ with open(fr'../data/{time}.{log_name}-data.txt', 'r', encoding='utf-8') as f:
 
 
 rounds_with_moderators_count = {}
+moderator_teams = {}
+
+max_streaks = {}  # {x: {'has': 0, 'without': 0}}
+current_streaks = {}
+
 for roundID, moderators_in_round in round_with_moderators.items():
     moderators_in_round = list(set(moderators_in_round))
-    for idx in range(0,8):
-        if len(moderators_in_round) >= idx:
-            max_count = idx
+    max_count = len(moderators_in_round)
+    if not max_count in [0,]:
+        if not tuple(moderators_in_round) in moderator_teams:
+            moderator_teams[tuple(moderators_in_round)] = 0
+        moderator_teams[tuple(moderators_in_round)] += 1
     if not max_count in rounds_with_moderators_count:
         rounds_with_moderators_count[max_count] = 0
     rounds_with_moderators_count[max_count] += 1
 
+    for x in range(1, 6):
+        if x not in max_streaks:
+            max_streaks[x] = {'has': 0, 'without': 0}
+            current_streaks[x] = {'has': 0, 'without': 0}
+        if current_streaks[x]['has'] > max_streaks[x]['has']:
+            max_streaks[x]['has'] = current_streaks[x]['has']
+        if current_streaks[x]['without'] > max_streaks[x]['without']:
+            max_streaks[x]['without'] = current_streaks[x]['without']
+        if max_count >= x:
+            current_streaks[x]['has'] += 1
+            current_streaks[x]['without'] = 0
+        else:
+            current_streaks[x]['has'] = 0
+            current_streaks[x]['without'] += 1
+
+for x in current_streaks:
+    if current_streaks[x]['has'] > max_streaks[x]['has']:
+        max_streaks[x]['has'] = current_streaks[x]['has']
+    if current_streaks[x]['without'] > max_streaks[x]['without']:
+        max_streaks[x]['without'] = current_streaks[x]['without']
+
+
+
 total_count = len(round_with_moderators)
 print(f"Total Rounds: {total_count}\n")
 
+print("Percent of rounds with atleast x moderators:")
 rounds_with_moderators_count =  sort_dict_by_key(rounds_with_moderators_count, False)
 for count, amount in rounds_with_moderators_count.items():
     if count == 0:
         continue
-    print(f"Percent of rounds with atleast {count} moderators: {round(sum(list(rounds_with_moderators_count.values())[count:])/total_count*100,2)}% ({sum(list(rounds_with_moderators_count.values())[count:])})")
+    print(f"{count}: {round(sum(list(rounds_with_moderators_count.values())[count:])/total_count*100,2)}% ({sum(list(rounds_with_moderators_count.values())[count:])})")
 
 print("")
 moderators_played_rounds_count = {}
 for name, round_list in moderators_played_rounds.items():
     moderators_played_rounds_count[name] = len(round_list)
-
+print("Moderator played rounds (percent of all games)")
 for name, amount in sort(moderators_played_rounds_count).items():
-    print(f"{name} played {amount} rounds ({round(amount/total_count*100,2)}% of all rounds)")
+    print(f"{name}: {amount} ({round(amount/total_count*100,2)}%)")
+
+print("\nModerator group, amount of games played (percent of all games) \n")
+for moderator_team, amount in sorted(moderator_teams.items(), key=lambda x: (len(x[0]), -x[1])):
+    print(f"{join_with_final(list(moderator_team), ', ', ' & ')}: {amount} ({round(amount/total_count*100,2)}%)")
+print("\nLongest streak with / without x moderators")
+for x, streaks in max_streaks.items():
+    print(f"{x}: with: {streaks['has']}, without: {streaks['without']}")

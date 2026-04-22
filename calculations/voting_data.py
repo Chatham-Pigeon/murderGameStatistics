@@ -13,74 +13,77 @@ class log:
             else:
                 setattr(self, key, f"{value}")
 log_name = "map-voting"
-time = "30d"
+time = "49d"
 with open(fr'../data/{time}.{log_name}-data.txt', 'r') as file:
     map_shares = {}
     map_selected = {}
+    map_counts = {}
 
     for line in file:
-        map_shares = {}
-        map_counts = {}
-        map_selected = {}
+        vote = log(line)
+        voting_dict = {}
 
-        for line in file:
-            vote = log(line)
-            voting_dict = {}
-
-            for part in vote.votingData.split(","):
-                if '=' not in part:
-                    continue
-                k, v = part.split("=", 1)
-                if k in ("playercount", "random"):
-                    continue
-                try:
-                    voting_dict[k] = int(v)
-                except:
-                    pass
-
-            if not voting_dict:
+        for part in vote.votingData.split(","):
+            if '=' not in part:
                 continue
-
-            total_votes_this_round = sum(voting_dict.values())
-            percents = calculate_percentages(voting_dict, should_round=True)
-
-            for m, p in percents.items():
-                if m not in map_shares:
-                    map_shares[m] = 0.0
-                    map_counts[m] = 0
-                    map_selected[m] = 0
-
-                map_shares[m] += p
-                map_counts[m] += 1
-
-            if total_votes_this_round > 0:
-                max_votes = max(voting_dict.values())
-                winners = [m for m, cnt in voting_dict.items() if cnt == max_votes]
-                if len(winners) == 1:
-                    winner = winners[0]
-                    map_selected[winner] += 1
-
-        average_vote_shares = {}
-        selection_rates = {}
-        appearance_counts = {}
-
-        for m in sorted(map_counts.keys()):
-            appearances = map_counts[m]
-            if appearances == 0:
+            k, v = part.split("=", 1)
+            if k == "Sinister Sancutary":
+                k = "Sinister Sanctuary"
+            if "IKEA" in k:
+                k = "IKEA"
+            if k in ("playercount", "random"):
                 continue
+            try:
+                voting_dict[k] = int(v)
+            except:
+                pass
 
-            avg_share = round(map_shares[m] / appearances, 2)
-            selected_count = map_selected.get(m, 0)
-            select_rate = round((selected_count / appearances) * 100, 2) if appearances > 0 else 0.0
+        if not voting_dict:
+            continue
 
-            average_vote_shares[m] = avg_share
-            selection_rates[m] = select_rate
-            appearance_counts[m] = appearances
+        total_votes_this_round = sum(voting_dict.values())
+        percents = calculate_percentages(voting_dict, should_round=True)
 
-        print("Average vote share (%) when available:")
-        print(average_vote_shares)
-        print("\nSelection rate (%) when available (non-ambiguous rounds only):")
-        print(selection_rates)
-        print("\nAppearance counts:")
-        print(appearance_counts)
+        for m, p in percents.items():
+            if m not in map_shares:
+                map_shares[m] = 0.0
+                map_counts[m] = 0
+                map_selected[m] = 0
+
+            map_shares[m] += p
+            map_counts[m] += 1
+
+        if total_votes_this_round > 0:
+            max_votes = max(voting_dict.values())
+            winners = [m for m, cnt in voting_dict.items() if cnt == max_votes]
+            if len(winners) == 1:
+                winner = winners[0]
+                map_selected[winner] += 1
+
+    average_vote_shares = {}
+    selection_rates = {}
+    appearance_counts = {}
+
+    for m in sorted(map_counts.keys()):
+        appearances = map_counts[m]
+        if appearances == 0:
+            continue
+
+        avg_share = round(map_shares[m] / appearances, 2)
+        selected_count = map_selected.get(m, 0)
+        select_rate = round((selected_count / appearances) * 100, 2) if appearances > 0 else 0.0
+
+        average_vote_shares[m] = avg_share
+        selection_rates[m] = select_rate
+        appearance_counts[m] = appearances
+
+    print("Average vote share (%) when available:")
+    idx = 0
+    for name, amt in sort(average_vote_shares).items():
+        idx += 1
+        print(f"{idx}. {name}: {amt}")
+    print("\nSelection rate (%) when available (non-ambiguous rounds only):")
+    print(sort(selection_rates))
+    print("\nAppearance counts:")
+    print(sort(appearance_counts))
 

@@ -56,3 +56,8 @@ def sort_dict_by_nested_value(items, key, reverse=True):
     return dict(sorted(items.items(), key=lambda x: x[1].get(key, 0), reverse=reverse))
 def formatted_win_rates(items):
     return ", ".join(f"{role}: {percent}%" for role, percent in calculate_percentages(items, True).items())
+
+def join_with_final(lst, sep=", ", final=" and "):
+    if len(lst) <= 1:
+        return "".join(lst)
+    return sep.join(lst[:-1]) + final + lst[-1]
