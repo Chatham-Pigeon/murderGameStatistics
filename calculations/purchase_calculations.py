@@ -36,7 +36,7 @@ id_to_name = {
 }
 
 log_name = "player-stats"
-time = "30d"
+time = "68d"
 with open(fr'../data/{time}.{log_name}-data.txt', 'r') as file:
     counts = {}
     role_purchases = {}
@@ -51,6 +51,7 @@ with open(fr'../data/{time}.{log_name}-data.txt', 'r') as file:
             role_purchases[save.role] = {}
         for item in save.purchases:
             if item == '':
+                continue
                 item = "purchased_nothing"
             if not item in role_purchases[save.role]:
                 role_purchases[save.role][item] = 0
@@ -66,6 +67,8 @@ with open(fr'../data/{time}.{log_name}-data.txt', 'r') as file:
 print("Role purchase Percents")
 for role, purchases in role_purchases.items():
     role = str(role)
+    if role == "None":
+        continue
     print(f"{role.capitalize()}:")
     purchases = calculate_percentages(purchases, True)
     purchases = sort(purchases)

@@ -9,7 +9,6 @@ class log:
         self.fiend = None
         self.winner = None
         self.playercount = None
-        self.gameRound = None
         raw_data = raw_data.removesuffix("\n").split(";")
         for i in raw_data:
             key, value = i.split(":")
@@ -19,17 +18,26 @@ class log:
                 setattr(self, key, f"{value}")
 
 log_name = "round"
-time = "68d"
+time = "3y"
 with open(fr'../data/{time}.{log_name}-data.txt', 'r') as file:
-    total_time = 0
-    rounds = []
+    lengths = []
     for line in file:
         data = log(line)
-        total_time += int(data.length)
-        rounds.append(data.gameRound)
-        if data.length > 0:
-            print(f'"{data.gameRound}": {data.length},')
-hours, minutes = divmod(total_time / 20 / 60, 60)
-print(f"{int(hours)}h{int(minutes)}m")
-print(len(rounds))
+        if data.winner == "traitor":
+            data.winner = "Traitors"
+        if data.winner == "innocents":
+            data.winner = "Citizens"
+        if data.map == "Forst Mansion":
+            data.map = "Forest Mansion"
+        if data.map == "Barcleys Bank":
+            data.map = "Barclays Bank"
+        if int(data.playercount) <= 2:
+            continue
+        if data.fiend == "true":
+            lengths.append(data.length)
+average = sum(lengths) / len(lengths)
+minutes, seconds = divmod(average / 20, 60)
+print(f"{int(minutes)}m{int(round(seconds, 0))}s")
+
+
 

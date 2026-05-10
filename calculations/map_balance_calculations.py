@@ -1,6 +1,53 @@
 from helper_functions import sort, sort_dict_by_nested_value, sort_dict_by_key, calculate_percentages, \
     formatted_win_rates
 
+builders = {
+    "Old Bunker": ["Sagittarixie"],
+    "Haunted Hotel": ["StardustGemini"],
+    "Subway Station": ["KabanFriends", "Powercyphe"],
+    "Bowling Alley": ["endersaltz"],
+    "Tropics": ["ninja70707"],
+    "The Mall": ["Benneze"],
+    "Mediterranean": ["ninja70707"],
+    "Overgrown City": ["Och0"],
+    "The Aquarium": ["Chatham_Pigeon"],
+    "Walmar Street": ["Powercyphe"],
+    "IKEA": ["InfinityWorks"],
+    "Behind The Waterfall": ["Powercyphe", "Legendarial"],
+    "Office": ["The_Blue_Friend"],
+    "Moon Base": ["Sagittarixie"],
+    "Bunker 83": ["endersaltz", "ACraftingFish"],
+    "Electrical Station": ["Sagittarixie", "The_Blue_Friend"],
+    "The Commons": ["Sagittarixie"],
+    "Emberwoods": ["Sagittarixie"],
+    "Temple of KING Sr.": ["nvct"],
+    "Impoverished Domicile": ["nvct"],
+    "2Fort": ["redstonae"],
+    "Fiend Casino": ["StardustGemini"],
+    "Cliffside Mansion": ["Euws"],
+    "Forest Mansion": ["Farbschaf"],
+    "The Depths": ["nvct"],
+    "The Mineshafts": ["TeamF"],
+    "Cosmic Encounter": ["Diglett_go", "Killer77Kat"],
+    "Oil Rig": ["nvct"],
+    "The Brigade": ["nvct"],
+    "The Trials": ["nvct"],
+    "Abandoned Prison": ["JJJT", "Luxwind_"],
+    "Highrise": ["Brxzillian"],
+    "Seaside": ["Brxzillian"],
+    "Japanese Estate": ["FigtheFruit"],
+    "Glacial Grotto": ["Brxzillian"],
+    "Overgrown Site": ["Brxzillian"],
+    "Northorn Mansion": ["Brxzillian"],
+    "Abandoned Factory": ["Farbschaf"],
+    "Barclays Bank": ["TeamF"],
+    "The Last Duel": ["nvct"],
+    "Sinister Sanctuary": ["Jeffree225", "nammannam"],
+    "Crimson Casino": ["Brxzillian"],
+    "Deep Dark Lab": ["___SillyGoose__"],
+    "Sculk Sanctum": ["RalseiDeltarune"],
+    "Nastrond": ["nvct"]
+}
 
 class log:
     def __init__(self, raw_data: str):
@@ -9,6 +56,7 @@ class log:
         self.fiend = None
         self.winner = None
         self.playercount = None
+        self.timestamp = None
         raw_data = raw_data.removesuffix("\n").split(";")
         for i in raw_data:
             key, value = i.split(":")
@@ -18,7 +66,7 @@ class log:
                 setattr(self, key, f"{value}")
 
 log_name = "round"
-time = "3y"
+time = "68d"
 with open(fr'../data/{time}.{log_name}-data.txt', 'r') as file:
     role_wins_proper = {"Traitors": 0, "Citizens": 0, "Fiends": 0}
     role_wins = {"Traitors": 0, "Citizens": 0}
@@ -36,7 +84,11 @@ with open(fr'../data/{time}.{log_name}-data.txt', 'r') as file:
             data.map = "Forest Mansion"
         if data.map == "Barcleys Bank":
             data.map = "Barclays Bank"
+        if data.map == "Sinister Sancutary":
+            data.map = "Sinister Sanctuary"
         if int(data.playercount) < 7:
+            continue
+        if not data.map in builders.keys():
             continue
         role_wins[data.winner] += 1
         if not data.map in role_wins_game_length_per_map:
@@ -84,7 +136,7 @@ for map_name, distance in euclidian_distance.items():
     idx += 1
     print(f"{idx}. {map_name}: {distance} ({formatted_win_rates(map_wins[map_name])}) ({amount_of_games[map_name]} games)")
     if idx >= 10:
-        pass
+        break
 print("")
 for role in target_role_win_percents.keys():
     print(f"Best Maps for {role}:")

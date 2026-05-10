@@ -23,7 +23,7 @@ class log:
 
 
 log_name = "player-stats"
-time = "48d"
+time = "68d"
 moderators = ['JJJT', "Darqnt", "AutumnsBreeze", "Chatham_Pigeon", "nvct", "Ace127", "Jeffree225", "pixlii", "KabanFriends"]
 with open(fr'../data/{time}.{log_name}-data.txt', 'r', encoding='utf-8') as f:
     round_with_moderators = {}
@@ -101,6 +101,6 @@ for name, amount in sort(moderators_played_rounds_count).items():
 print("\nModerator group, amount of games played (percent of all games) \n")
 for moderator_team, amount in sorted(moderator_teams.items(), key=lambda x: (len(x[0]), -x[1])):
     print(f"{join_with_final(list(moderator_team), ', ', ' & ')}: {amount} ({round(amount/total_count*100,2)}%)")
-print("\nLongest streak with / without x moderators")
+print("\nLongest streak with / without atleast x moderators")
 for x, streaks in max_streaks.items():
     print(f"{x}: with: {streaks['has']}, without: {streaks['without']}")

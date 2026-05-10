@@ -23,7 +23,7 @@ class log:
 
 
 log_name = "player-stats"
-time = "30d"
+time = "68d"
 with open(fr'../data/{time}.{log_name}-data.txt', 'r', encoding='utf-8') as f:
     time_alive = {}
     bow_accuracy = {}

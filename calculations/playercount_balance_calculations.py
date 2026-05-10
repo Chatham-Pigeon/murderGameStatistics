@@ -2,6 +2,8 @@ from helper_functions import sort, sort_dict_by_nested_value, sort_dict_by_key, 
     formatted_win_rates
 
 
+
+
 class log:
     def __init__(self, raw_data: str):
         self.length = None
@@ -18,7 +20,7 @@ class log:
                 setattr(self, key, f"{value}")
 
 log_name = "round"
-time = "3y"
+time = "68d"
 with open(fr'../data/{time}.{log_name}-data.txt', 'r') as file:
     role_wins_proper = {"Traitors": 0, "Citizens": 0, "Fiends": 0}
     role_wins = {"Traitors": 0, "Citizens": 0}
@@ -79,15 +81,19 @@ print(f"Playercounts ranked by their Euclidian Distance Deviation from a 40/40/2
 euclidian_distance = sort(euclidian_distance, False)
 idx = 0
 for map_name, distance in euclidian_distance.items():
+    if not amount_of_games[map_name] >= 25:
+        continue
     idx += 1
     print(f"{idx}. {map_name}: {distance} ({formatted_win_rates(map_wins[map_name])}) ({amount_of_games[map_name]} games)")
     if idx >= 10:
-        pass
+        break
 print("")
 for role in target_role_win_percents.keys():
     print(f"Best Playercounts for {role}:")
     idx = 0
     for map_name, wins in sort_dict_by_nested_value(map_wins, role).items():
+        if not amount_of_games[map_name] >= 25:
+            continue
         idx += 1
         print(f"{idx}. {map_name}: {formatted_win_rates(wins)} ({amount_of_games[map_name]} games)")
         if idx >= 3:
