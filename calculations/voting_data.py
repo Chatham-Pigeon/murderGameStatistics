@@ -13,7 +13,7 @@ class log:
             else:
                 setattr(self, key, f"{value}")
 log_name = "map-voting"
-time = "49d"
+time = "68d"
 with open(fr'../data/{time}.{log_name}-data.txt', 'r') as file:
     map_shares = {}
     map_selected = {}

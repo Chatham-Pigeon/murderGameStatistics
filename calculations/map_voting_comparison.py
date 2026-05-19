@@ -17,7 +17,7 @@ class log:
                 setattr(self, key, f"{value}")
 
 log_name = "map-voting"
-time = "49d"
+time = "68d"
 
 pair_shares = defaultdict(lambda: defaultdict(list))
 

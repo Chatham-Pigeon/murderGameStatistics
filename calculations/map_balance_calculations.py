@@ -65,6 +65,19 @@ class log:
             else:
                 setattr(self, key, f"{value}")
 
+        if self.winner == "traitor":
+            self.winner = "Traitors"
+        if self.winner == "innocents":
+            self.winner = "Citizens"
+        if self.map == "Forst Mansion":
+            self.map = "Forest Mansion"
+        if self.map == "Barcleys Bank":
+            self.map = "Barclays Bank"
+        if self.map == "Sinister Sancutary":
+            self.map = "Sinister Sanctuary"
+        if "IKEA" in self.map:
+            self.map = "IKEA"
+
 log_name = "round"
 time = "68d"
 with open(fr'../data/{time}.{log_name}-data.txt', 'r') as file:
@@ -76,16 +89,6 @@ with open(fr'../data/{time}.{log_name}-data.txt', 'r') as file:
     amount_of_games = {}
     for line in file:
         data = log(line)
-        if data.winner == "traitor":
-            data.winner = "Traitors"
-        if data.winner == "innocents":
-            data.winner = "Citizens"
-        if data.map == "Forst Mansion":
-            data.map = "Forest Mansion"
-        if data.map == "Barcleys Bank":
-            data.map = "Barclays Bank"
-        if data.map == "Sinister Sancutary":
-            data.map = "Sinister Sanctuary"
         if int(data.playercount) < 7:
             continue
         if not data.map in builders.keys():
@@ -136,7 +139,7 @@ for map_name, distance in euclidian_distance.items():
     idx += 1
     print(f"{idx}. {map_name}: {distance} ({formatted_win_rates(map_wins[map_name])}) ({amount_of_games[map_name]} games)")
     if idx >= 10:
-        break
+        pass
 print("")
 for role in target_role_win_percents.keys():
     print(f"Best Maps for {role}:")
