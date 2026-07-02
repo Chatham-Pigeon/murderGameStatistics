@@ -1,0 +1,3 @@
+secret_dir/
+.venv/
+SECRETS.py
